@@ -34,32 +34,325 @@ const COLORS = {
 const CAR_COLORS = ['#e74c3c', '#f39c12', '#3498db', '#ecf0f1', '#9b59b6', '#1abc9c', '#f1c40f'];
 const SHIRT_COLORS = ['#e67e22', '#2ecc71', '#e74c3c', '#9b59b6', '#3498db', '#f39c12'];
 
+const CONTEXT_QUOTES = {
+  rain: [
+    'Good thing I brought my umbrella today! ☔',
+    'Love the soothing sound of rain on the tree leaves.',
+    'The canopy is soaking up thousands of liters of rainwater!',
+    'No flooded sidewalks here thanks to deep tree roots.',
+    'The river ducks are having the time of their lives! 🦆',
+    'Rain cleans the air so nicely when trees are around.',
+  ],
+  summer: [
+    'Whew, it is blazing today! So grateful for this tree shade. ☀️🌳',
+    'The unshaded asphalt is scorching, but it feels cool under these leaves.',
+    'I can literally feel the cool evapotranspiration breeze!',
+    'An iced lemonade under an oak tree is summer perfection. 🍋',
+    'Shade trees are lifesavers during heatwaves like this.',
+    'The canopy dropped the sidewalk temperature by at least 4°C!',
+  ],
+  winter: [
+    'Brrr chilly morning! But the pine grove blocks the freezing wind. ❄️',
+    'The evergreen pines look like a postcard dusted with snow.',
+    'Hot cocoa season is here! ☕',
+    'Even in winter, evergreen needles keep filtering the air!',
+  ],
+  autumn: [
+    'These autumn maples look like they are made of gold and fire! 🍁',
+    'Crisp autumn breeze and crunchy leaves underfoot.',
+    'Autumn in Central Park is my absolute favorite season.',
+    'Look at the red and amber colors across the boulevard!',
+  ],
+  fountain: [
+    'The cool mist from the fountain feels incredible! ⛲',
+    'Best place in the city to meet up and listen to the water.',
+    'Watching the ripples sparkle in the fountain is pure meditation.',
+  ],
+  bench: [
+    'Ah, my favorite cedar bench. A peaceful moment to pause and breathe. 😌',
+    'Reading a good book under a leafy canopy is true luxury. 📖',
+    'Taking a coffee break surrounded by birds and greenery. ☕',
+    'Watching the city go by under the green leaves.',
+  ],
+  dog: [
+    'Who is a good dog? Sniffing every pine needle on the path! 🐕',
+    'My dog always pulls me towards the shady side of the street.',
+    'Tails are wagging all the way down the boulevard!',
+  ],
+  chatPairs: [
+    ['Hey there! Beautiful day for a walk! 👋', 'It really is! The air feels so crisp today. 😊'],
+    ['Look at how much this oak has grown! 🌳', 'The shade is massive now—such a difference!'],
+    ['Did you check the AQI today? 🍃', 'Yes, green zone! The trees are doing their job.'],
+    ['Heading to the fountain plaza? ⛲', 'Right behind you—best spot for an iced drink!'],
+    ['Love your dog! 🐕', 'Thanks! She loves trotting through the cool shade.'],
+    ['Rain or shine, this park is stunning.', 'Agreed! The canopies act like natural umbrellas. ☔'],
+    ['City feels so peaceful with all these trees.', 'Urban forestry was the best project our city ever funded!'],
+    ['The breeze through the pines smells amazing.', 'Natural evergreen aromatherapy! 🌲'],
+    ['Notice how much quieter the streets are?', 'Trees absorb traffic noise so effectively.'],
+  ]
+};
+
 const CITIZEN_PROFILES = [
-  { id: 1, name: 'Sofia', quote: 'The air is so crisp under this oak grove!', shirt: '#e74c3c', skin: '#f5d0b0', hasDog: true, dogOffset: -0.35, umbrella: '#e74c3c' },
-  { id: 2, name: 'Liam', quote: 'It feels at least 3 degrees cooler near the trees!', shirt: '#3498db', skin: '#8d5524', hasDog: false, umbrella: '#3498db' },
-  { id: 3, name: 'Maya', quote: 'Best spot in the city to read under the canopy.', shirt: '#2ecc71', skin: '#c68642', hasDog: false, umbrella: '#2ecc71' },
-  { id: 4, name: 'Marcus', quote: 'Our municipal tree coverage looks wonderful today!', shirt: '#9b59b6', skin: '#e0ac69', hasDog: true, dogOffset: 0.35, umbrella: '#9b59b6' },
-  { id: 5, name: 'Emma', quote: 'Bella loves trotting through the cool shade.', shirt: '#f39c12', skin: '#ffdbac', hasDog: true, dogOffset: -0.4, umbrella: '#f1c40f' },
-  { id: 6, name: 'Noah', quote: 'The fountain plaza and trees make this city alive.', shirt: '#1abc9c', skin: '#59381e', hasDog: false, umbrella: '#00cec9' },
-  { id: 7, name: 'Olivia', quote: 'The playground is so much safer with canopy shade!', shirt: '#e91e63', skin: '#f5d0b0', hasDog: false, umbrella: '#ff7675' },
-  { id: 8, name: 'Lucas', quote: 'Walking the boulevard is a breeze in the shade.', shirt: '#3f51b5', skin: '#8d5524', hasDog: false, umbrella: '#3498db' },
-  { id: 9, name: 'Chloe', quote: 'I love stopping to chat with neighbors here.', shirt: '#00bcd4', skin: '#c68642', hasDog: false, umbrella: '#00bcd4' },
-  { id: 10, name: 'Ethan', quote: 'My favorite jogging loop passes right by the oaks.', shirt: '#ff5722', skin: '#e0ac69', hasDog: false, umbrella: '#ff7675' },
-  { id: 11, name: 'Ava', quote: 'Canopy cover keeps rainwater from flooding paths.', shirt: '#8bc34a', skin: '#ffdbac', hasDog: false, umbrella: '#2ecc71' },
-  { id: 12, name: 'Leo', quote: 'A peaceful afternoon resting on the cedar bench.', shirt: '#673ab7', skin: '#59381e', hasDog: false, umbrella: '#9b59b6' },
-  { id: 13, name: 'Mia', quote: 'The blossom petals drifting down are so serene.', shirt: '#e84393', skin: '#f5d0b0', hasDog: true, dogOffset: 0.35, umbrella: '#e84393' },
-  { id: 14, name: 'Aiden', quote: 'Our air quality index is getting cleaner each year!', shirt: '#00cec9', skin: '#8d5524', hasDog: false, umbrella: '#00cec9' },
-  { id: 15, name: 'Harper', quote: 'Rain or shine, the trees keep the boulevard calm.', shirt: '#fdcb6e', skin: '#c68642', hasDog: false, umbrella: '#f1c40f' },
-  { id: 16, name: 'Jayden', quote: 'More trees mean cooler streets and happier folks!', shirt: '#d63031', skin: '#e0ac69', hasDog: false, umbrella: '#e74c3c' },
-  { id: 17, name: 'Zara', quote: 'I love sketching these beautiful maple leaves.', shirt: '#6c5ce7', skin: '#ffdbac', hasDog: false, umbrella: '#9b59b6' },
-  { id: 18, name: 'Benjamin', quote: 'Back in my day this was concrete. Now look at it!', shirt: '#636e72', skin: '#f5d0b0', hasDog: false, umbrella: '#34495e' },
-  { id: 19, name: 'Ella', quote: 'Luna wagged her tail the whole walk through the park!', shirt: '#00b894', skin: '#8d5524', hasDog: true, dogOffset: -0.35, umbrella: '#2ecc71' },
-  { id: 20, name: 'James', quote: 'Urban forestry is the smartest investment for us.', shirt: '#0984e3', skin: '#c68642', hasDog: false, umbrella: '#3498db' },
-  { id: 21, name: 'Amara', quote: 'The pine fragrance in the morning breeze is heavenly.', shirt: '#e17055', skin: '#e0ac69', hasDog: false, umbrella: '#ff7675' },
-  { id: 22, name: 'Henry', quote: 'Cathedral bells chime so sweetly through the trees.', shirt: '#2d3436', skin: '#ffdbac', hasDog: false, umbrella: '#34495e' },
-  { id: 23, name: 'Grace', quote: 'Feeding the ducks by the pond is pure relaxation.', shirt: '#a29bfe', skin: '#59381e', hasDog: false, umbrella: '#a29bfe' },
-  { id: 24, name: 'Oliver', quote: 'Air Quality is in the green zone today!', shirt: '#ffeaa7', skin: '#f5d0b0', hasDog: false, umbrella: '#f1c40f' },
+  { 
+    id: 1, name: 'Sofia', role: 'Botanist', shirt: '#e74c3c', skin: '#f5d0b0', hasDog: true, dogOffset: -0.35, umbrella: '#e74c3c',
+    quotes: [
+      'The air is so crisp under this oak grove!',
+      'Did you know mature oaks support over 500 species of birds and insects?',
+      'Photosynthesis is in overdrive today—look at the vibrant canopy! 🍃',
+      'Trees reduce ambient ground temperature by up to 4°C through transpiration.',
+      'Bella loves resting in the root shade of these great trees! 🐕',
+      'Urban biodiversity is the foundation of community resilience.'
+    ]
+  },
+  { 
+    id: 2, name: 'Liam', role: 'Runner', shirt: '#3498db', skin: '#8d5524', hasDog: false, umbrella: '#3498db',
+    quotes: [
+      'It feels at least 3 degrees cooler on this park loop!',
+      'Running along bare asphalt is exhausting, but tree-lined trails keep me going.',
+      'Heart rate is steady—the oxygen levels in this park are amazing.',
+      'Best running city I have ever lived in! 🏃‍♂️',
+      'Nothing beats a morning sprint past the maple boulevard.'
+    ]
+  },
+  { 
+    id: 3, name: 'Maya', role: 'Architect', shirt: '#2ecc71', skin: '#c68642', hasDog: false, umbrella: '#2ecc71',
+    quotes: [
+      'Best spot in the city to read and sketch under the canopy. 📐',
+      'Biophilic city design: when nature and architecture harmonize.',
+      'Shading building facades cuts air conditioning load by up to 25%!',
+      'The green corridor along the river is brilliantly planned.',
+      'Just finished another chapter in the quiet park breeze.'
+    ]
+  },
+  { 
+    id: 4, name: 'Marcus', role: 'Arborist', shirt: '#9b59b6', skin: '#e0ac69', hasDog: true, dogOffset: 0.35, umbrella: '#9b59b6',
+    quotes: [
+      'Our municipal tree coverage is looking spectacular today!',
+      'Healthy root systems are intercepting thousands of liters of stormwater.',
+      'Max and I inspect these cherry blossoms every morning.',
+      'Diverse tree species protect the city against invasive blights.',
+      'The pruning program is paying off—these crowns are flourishing!'
+    ]
+  },
+  { 
+    id: 5, name: 'Emma', role: 'Dog Walker', shirt: '#f39c12', skin: '#ffdbac', hasDog: true, dogOffset: -0.4, umbrella: '#f1c40f',
+    quotes: [
+      'Bella loves trotting through the cool shade along the avenue.',
+      'Hot pavement hurts dog paws, so we always stick to the tree shade! 🐾',
+      'Three dogs walked today and all of them love the park fountain.',
+      'The birds singing in these maples make the walk so cheerful.'
+    ]
+  },
+  { 
+    id: 6, name: 'Noah', role: 'City Planner', shirt: '#1abc9c', skin: '#59381e', hasDog: false, umbrella: '#00cec9',
+    quotes: [
+      'The fountain plaza and trees make this city truly alive.',
+      'Every dollar invested in urban canopy yields over five dollars in social ROI!',
+      'Pedestrian foot traffic increased 40% once we planted these trees.',
+      'A walkable, shaded city is an equitable city.'
+    ]
+  },
+  { 
+    id: 7, name: 'Olivia', role: 'Teacher', shirt: '#e91e63', skin: '#f5d0b0', hasDog: false, umbrella: '#ff7675',
+    quotes: [
+      'The playground is so much safer with canopy shade protecting the children!',
+      'We brought the students out to identify oak and maple leaves today.',
+      'Kids learn so much better when they can play in green spaces.',
+      'Recess is wonderful when the sun is not blinding the swings.'
+    ]
+  },
+  { 
+    id: 8, name: 'Lucas', role: 'Cyclist', shirt: '#3f51b5', skin: '#8d5524', hasDog: false, umbrella: '#3498db',
+    quotes: [
+      'Biking down the shaded boulevard feels like gliding through nature. 🚴',
+      'The windbreak provided by the pine trees makes riding much smoother.',
+      'Commuting by bike through green corridors saves money and boosts health.',
+      'Fresh oxygen makes the uphill pedal feel effortless!'
+    ]
+  },
+  { 
+    id: 9, name: 'Chloe', role: 'Barista', shirt: '#00bcd4', skin: '#c68642', hasDog: false, umbrella: '#00bcd4',
+    quotes: [
+      'Outdoor cafe tables under tree shade are always the first to fill up! ☕',
+      'Serving iced coffees on a breezy, tree-lined street is a dream.',
+      'Neighbors love stopping by to chat after their park walk.',
+      'The smell of roasting coffee beans blends beautifully with pine needles.'
+    ]
+  },
+  { 
+    id: 10, name: 'Ethan', role: 'Triathlete', shirt: '#ff5722', skin: '#e0ac69', hasDog: false, umbrella: '#ff7675',
+    quotes: [
+      'My favorite marathon training route loops right through Central Park.',
+      'Deep breaths: clean air with low PM2.5 makes all the difference for endurance.',
+      'Hydration plus tree shade is the winning summer workout combo!',
+      'Passing by the fountain gives an instant energy boost.'
+    ]
+  },
+  { 
+    id: 11, name: 'Ava', role: 'Hydrologist', shirt: '#8bc34a', skin: '#ffdbac', hasDog: false, umbrella: '#2ecc71',
+    quotes: [
+      'Canopy cover keeps rainwater from flooding sidewalks and overflowing drains.',
+      'Soil permeability near these groves is preventing urban flash flooding.',
+      'Every mature oak intercepts thousands of liters of annual precipitation.',
+      'The river water quality is noticeably cleaner with the forested embankment!'
+    ]
+  },
+  { 
+    id: 12, name: 'Leo', role: 'Retiree', shirt: '#673ab7', skin: '#59381e', hasDog: false, umbrella: '#9b59b6',
+    quotes: [
+      'A peaceful afternoon resting on the cedar bench with my crossword puzzle. 📰',
+      'The shade keeps my blood pressure down on hot afternoons.',
+      'I have lived in this city 50 years—it has never looked greener or happier.',
+      'Listening to the church bells through the trees brings back fond memories.'
+    ]
+  },
+  { 
+    id: 13, name: 'Mia', role: 'Florist', shirt: '#e84393', skin: '#f5d0b0', hasDog: true, dogOffset: 0.35, umbrella: '#e84393',
+    quotes: [
+      'The blossom petals drifting down around the fountain are so serene. 🌸',
+      'Cherry blossoms and maples create the most exquisite seasonal color palette.',
+      'Honeybees and butterflies are thriving in the park flowerbeds!',
+      'Luna and I collected a gorgeous bouquet of fallen leaves today.'
+    ]
+  },
+  { 
+    id: 14, name: 'Aiden', role: 'Meteorologist', shirt: '#00cec9', skin: '#8d5524', hasDog: false, umbrella: '#00cec9',
+    quotes: [
+      'Our local sensor network shows AQI in the optimal green zone today! 🍃',
+      'Urban heat island intensity is down by 3.5°C thanks to tree evapotranspiration.',
+      'Barometric pressure is steady, and microclimates across the city are balancing out.',
+      'Data does not lie: urban forestry is climate adaptation in action.'
+    ]
+  },
+  { 
+    id: 15, name: 'Harper', role: 'Journalist', shirt: '#fdcb6e', skin: '#c68642', hasDog: false, umbrella: '#f1c40f',
+    quotes: [
+      'Writing a front-page feature on our city eco-dividend breakthrough! 📰',
+      'Every citizen I interview talks about how much they love the new green spaces.',
+      'Rain or shine, this city is setting a benchmark for sustainable urban living.',
+      'The transition from bare concrete to green paradise is an inspiring story.'
+    ]
+  },
+  { 
+    id: 16, name: 'Jayden', role: 'Volunteer', shirt: '#d63031', skin: '#e0ac69', hasDog: false, umbrella: '#e74c3c',
+    quotes: [
+      'More trees mean cooler streets, cleaner air, and happier neighbors!',
+      'Our weekend community tree-planting drive broke all attendance records.',
+      'Watching a sapling you planted grow into a tall canopy tree is pure joy.',
+      'Let us keep planting until every neighborhood has 40% canopy coverage!'
+    ]
+  },
+  { 
+    id: 17, name: 'Zara', role: 'Artist', shirt: '#6c5ce7', skin: '#ffdbac', hasDog: false, umbrella: '#9b59b6',
+    quotes: [
+      'I love sketching these beautiful maple leaves and shadows in my sketchbook. 🎨',
+      'The dappled light filtering through the leaves creates natural poetry.',
+      'Colors change every hour in the park—it is an endless source of inspiration.',
+      'The reflection of the trees in the fountain pool is simply breathtaking.'
+    ]
+  },
+  { 
+    id: 18, name: 'Benjamin', role: 'Historian', shirt: '#636e72', skin: '#f5d0b0', hasDog: false, umbrella: '#34495e',
+    quotes: [
+      'Back in the 1970s this whole avenue was smog and concrete. Now look at it!',
+      'The historic cathedral looks so dignified framed by mature broadleaf trees.',
+      'We are leaving a magnificent living legacy for the next generation.',
+      'Trees connect us to the past and shelter us into the future.'
+    ]
+  },
+  { 
+    id: 19, name: 'Ella', role: 'Veterinarian', shirt: '#00b894', skin: '#8d5524', hasDog: true, dogOffset: -0.35, umbrella: '#2ecc71',
+    quotes: [
+      'Luna wagged her tail the whole walk through the park trail! 🐕',
+      'Green spaces reduce anxiety in both pets and people remarkably.',
+      'Animals thrive when cities maintain connected ecological corridors.',
+      'The birds nesting in these pine groves are singing up a storm today.'
+    ]
+  },
+  { 
+    id: 20, name: 'James', role: 'Economist', shirt: '#0984e3', skin: '#c68642', hasDog: false, umbrella: '#3498db',
+    quotes: [
+      'Urban forestry is the highest-ROI capital investment a municipality can make.',
+      'Lower energy bills, reduced stormwater infrastructure costs, and higher property values!',
+      'The annual municipal eco-dividend is paying for itself year after year.',
+      'Green infrastructure beats concrete pipes and air filters on every economic metric.'
+    ]
+  },
+  { 
+    id: 21, name: 'Amara', role: 'Yoga Instructor', shirt: '#e17055', skin: '#e0ac69', hasDog: false, umbrella: '#ff7675',
+    quotes: [
+      'The morning pine fragrance in the breeze makes meditation effortless. 🧘',
+      'Inhale fresh oxygen, exhale tension. Nature is the best wellness retreat.',
+      'Outdoor morning yoga on the park lawn is full every single week.',
+      'Grounding your feet in the grass under majestic trees restores vitality.'
+    ]
+  },
+  { 
+    id: 22, name: 'Henry', role: 'Caretaker', shirt: '#2d3436', skin: '#ffdbac', hasDog: false, umbrella: '#34495e',
+    quotes: [
+      'The cathedral bells chime so sweetly through the leafy branches. ⛪',
+      'Raking golden maple leaves in autumn is honest, peaceful work.',
+      'The stone masonry stays cooler in summer protected by tree shade.',
+      'A quiet morning in the historic courtyard is true blessing.'
+    ]
+  },
+  { 
+    id: 23, name: 'Grace', role: 'Birder', shirt: '#a29bfe', skin: '#59381e', hasDog: false, umbrella: '#a29bfe',
+    quotes: [
+      'Spotted a pair of goldfinches and a cedar waxwing nesting in the oaks! 🐦',
+      'Watching the river ducks glide across the water from this bench is pure relaxation.',
+      'Tree species diversity directly multiplies the variety of urban songbirds.',
+      'Binoculars in hand, coffee on the bench—my favorite kind of afternoon.'
+    ]
+  },
+  { 
+    id: 24, name: 'Oliver', role: 'Student', shirt: '#ffeaa7', skin: '#f5d0b0', hasDog: false, umbrella: '#f1c40f',
+    quotes: [
+      'Studying for environmental science finals under the cherry blossom tree! 📚',
+      'Our school campus is so much nicer since we planted the playground canopy.',
+      'Measuring tree circumference for our biology project—this oak is thriving.',
+      'Fresh air keeps my brain sharp while cramming for exams.'
+    ]
+  },
 ];
+
+function getRandomCitizenQuote(citizen, weather, season, effectiveGrid) {
+  const rand = Math.random();
+  
+  // Weather context
+  if (weather === 'rainy' && rand < 0.4) {
+    return CONTEXT_QUOTES.rain[Math.floor(Math.random() * CONTEXT_QUOTES.rain.length)];
+  }
+  if (weather === 'sunny' && season === 'summer' && rand < 0.35) {
+    return CONTEXT_QUOTES.summer[Math.floor(Math.random() * CONTEXT_QUOTES.summer.length)];
+  }
+  if (season === 'autumn' && rand < 0.35) {
+    return CONTEXT_QUOTES.autumn[Math.floor(Math.random() * CONTEXT_QUOTES.autumn.length)];
+  }
+  if (season === 'winter' && rand < 0.35) {
+    return CONTEXT_QUOTES.winter[Math.floor(Math.random() * CONTEXT_QUOTES.winter.length)];
+  }
+
+  // Location context: bench or fountain
+  const currR = Math.round(citizen.y);
+  const currC = Math.round(citizen.x);
+  if (effectiveGrid && effectiveGrid[currR]?.[currC] === TILE_BENCH && rand < 0.45) {
+    return CONTEXT_QUOTES.bench[Math.floor(Math.random() * CONTEXT_QUOTES.bench.length)];
+  }
+  if (effectiveGrid && effectiveGrid[currR]?.[currC] === TILE_FOUNTAIN && rand < 0.45) {
+    return CONTEXT_QUOTES.fountain[Math.floor(Math.random() * CONTEXT_QUOTES.fountain.length)];
+  }
+  if (citizen.hasDog && rand < 0.3) {
+    return CONTEXT_QUOTES.dog[Math.floor(Math.random() * CONTEXT_QUOTES.dog.length)];
+  }
+
+  // Personal quotes pool
+  if (citizen.quotes && citizen.quotes.length > 0) {
+    return citizen.quotes[Math.floor(Math.random() * citizen.quotes.length)];
+  }
+
+  return 'The trees make our city feel alive! 🌳';
+}
 
 function getTreeStage(age) {
   if (age <= 2) return 'seedling';
@@ -92,7 +385,8 @@ function CityMap({
 }) {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
-  const [hoverTile, setHoverTile] = useState(null);
+  const hoverTileRef = useRef(null);
+  const lastHoverCoordRef = useRef({ row: -1, col: -1 });
   const [zoom, setZoom] = useState(1.0);
 
   // Entities and systems
@@ -259,7 +553,7 @@ function CityMap({
     ctx.fillRect(x, y, size, size);
   };
 
-  const drawWater = (ctx, x, y, size, row, col, time) => {
+  const drawWater = (ctx, x, y, size, row, col, time, effectiveGrid = grid) => {
     const grad = ctx.createLinearGradient(x, y, x + size, y + size);
     grad.addColorStop(0, currentSeason.waterColor);
     grad.addColorStop(1, '#3498db');
@@ -277,6 +571,56 @@ function CityMap({
     ctx.beginPath();
     ctx.arc(x + size * 0.7 - waveOffset, y + size * 0.7, size * 0.18, 0.2 * Math.PI, 0.8 * Math.PI);
     ctx.stroke();
+
+    // 🌊 Pedestrian Safety Barricade & Stone Embankment along riverbanks
+    const hasLeftLand = col > 0 && effectiveGrid[row]?.[col - 1] !== TILE_WATER && effectiveGrid[row]?.[col - 1] !== TILE_BRIDGE;
+    const hasRightLand = col < COLS - 1 && effectiveGrid[row]?.[col + 1] !== TILE_WATER && effectiveGrid[row]?.[col + 1] !== TILE_BRIDGE;
+
+    if (hasLeftLand) {
+      // West Embankment Stone Curb
+      ctx.fillStyle = '#7f8c8d';
+      ctx.fillRect(x, y, 4, size);
+      // West Barricade Railing
+      ctx.strokeStyle = '#2c3e50';
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      ctx.moveTo(x + 2, y);
+      ctx.lineTo(x + 2, y + size);
+      ctx.stroke();
+      // Wooden/Iron Posts along curb
+      for (let py = y + 4; py < y + size; py += size * 0.35) {
+        ctx.fillStyle = '#1c2833';
+        ctx.fillRect(x + 1, py, 3, 3);
+        // Lifebuoy ring on some posts
+        if ((row + col) % 5 === 0 && py === y + 4) {
+          ctx.strokeStyle = '#e74c3c';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.arc(x + 2, py + 1.5, 3.5, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(x + 1, py, 2, 2);
+        }
+      }
+    }
+
+    if (hasRightLand) {
+      // East Embankment Stone Curb
+      ctx.fillStyle = '#7f8c8d';
+      ctx.fillRect(x + size - 4, y, 4, size);
+      // East Barricade Railing
+      ctx.strokeStyle = '#2c3e50';
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      ctx.moveTo(x + size - 2, y);
+      ctx.lineTo(x + size - 2, y + size);
+      ctx.stroke();
+      // Wooden/Iron Posts along curb
+      for (let py = y + 4; py < y + size; py += size * 0.35) {
+        ctx.fillStyle = '#1c2833';
+        ctx.fillRect(x + size - 4, py, 3, 3);
+      }
+    }
   };
 
   const drawBridge = (ctx, x, y, size, grid, row, col) => {
@@ -1342,17 +1686,43 @@ function CityMap({
           );
           if (neighbor) {
             human.state = 'chatting';
-            human.chatTimer = 160;
-            human.chatMessage = 'Love these trees! 🌳';
+            human.chatTimer = 180;
             neighbor.state = 'chatting';
-            neighbor.chatTimer = 160;
-            neighbor.chatMessage = 'So fresh! 😊';
+            neighbor.chatTimer = 180;
+            const chatPair = CONTEXT_QUOTES.chatPairs[Math.floor(Math.random() * CONTEXT_QUOTES.chatPairs.length)];
+            human.chatMessage = chatPair[0];
+            neighbor.chatMessage = chatPair[1];
           }
         }
 
-        // Apply walking movement
-        human.x += human.vx;
-        human.y += human.vy;
+        // Apply walking movement with WATER BARRICADE COLLISION
+        const nextX = human.x + human.vx;
+        const nextY = human.y + human.vy;
+        const targetCol = Math.floor(nextX);
+        const targetRow = Math.floor(nextY);
+        const targetTile = effectiveGrid[targetRow]?.[targetCol];
+
+        // Strict water barricade: HUMANS CANNOT ENTER WATER! (Only bridges allowed)
+        if (targetTile === TILE_WATER) {
+          human.vx = -human.vx;
+          human.vy = (Math.random() - 0.5) * 0.02; // slide parallel along riverbank
+        } else {
+          human.x = nextX;
+          human.y = nextY;
+        }
+
+        // Safety clamp: If a human is currently inside a water tile, push them out immediately to the bank!
+        const curCol = Math.floor(human.x);
+        const curRow = Math.floor(human.y);
+        if (effectiveGrid[curRow]?.[curCol] === TILE_WATER) {
+          if (human.x < 18) {
+            human.x = 15.4;
+            human.vx = -Math.abs(human.vx || 0.012);
+          } else {
+            human.x = 20.3;
+            human.vx = Math.abs(human.vx || 0.012);
+          }
+        }
       }
 
       // Map boundary rebound
@@ -1889,7 +2259,7 @@ function CityMap({
         const tile = effectiveGrid[row][col];
 
         if (tile === TILE_WATER) {
-          drawWater(ctx, x, y, tileSize, row, col, currentTime);
+          drawWater(ctx, x, y, tileSize, row, col, currentTime, effectiveGrid);
         } else if (tile === TILE_BRIDGE) {
           drawBridge(ctx, x, y, tileSize, effectiveGrid, row, col);
         } else if (tile === TILE_CHURCH) {
@@ -1949,7 +2319,8 @@ function CityMap({
       drawThermalHeatmap(ctx, effectiveGrid, tileSize);
     }
 
-    // 7. Hover Highlight
+    // 7. Hover Highlight (rendered directly from ref without state lag)
+    const hoverTile = hoverTileRef.current;
     if (hoverTile) {
       const hx = hoverTile.col * tileSize;
       const hy = hoverTile.row * tileSize;
@@ -2015,7 +2386,7 @@ function CityMap({
     }
 
     animFrameIdRef.current = requestAnimationFrame(renderLoop);
-  }, [grid, year, weather, timeOfDay, season, isHeatmapActive, comparisonMode, activeEvent, aqi, getEffectiveTileSize, hoverTile, treeMetadata, currentSeason]);
+  }, [grid, year, weather, timeOfDay, season, isHeatmapActive, comparisonMode, activeEvent, aqi, getEffectiveTileSize, treeMetadata, currentSeason]);
 
   useEffect(() => {
     animFrameIdRef.current = requestAnimationFrame(renderLoop);
@@ -2061,19 +2432,29 @@ function CityMap({
     const row = Math.floor((e.clientY - rect.top) * (ROWS / rect.height));
 
     if (row >= 0 && row < ROWS && col >= 0 && col < COLS) {
-      const actualType = comparisonMode === 'before' && grid[row][col] === TILE_TREE ? TILE_EMPTY : grid[row][col];
-      const info = { row, col, type: actualType };
-      setHoverTile({ row, col });
-      if (onHoverTileChange) onHoverTileChange(info);
+      hoverTileRef.current = { row, col };
+      // Only notify parent when tile coordinate actually changes to prevent re-render lag!
+      if (row !== lastHoverCoordRef.current.row || col !== lastHoverCoordRef.current.col) {
+        lastHoverCoordRef.current = { row, col };
+        const actualType = comparisonMode === 'before' && grid[row][col] === TILE_TREE ? TILE_EMPTY : grid[row][col];
+        const info = { row, col, type: actualType };
+        if (onHoverTileChange) onHoverTileChange(info);
+      }
     } else {
-      setHoverTile(null);
-      if (onHoverTileChange) onHoverTileChange(null);
+      hoverTileRef.current = null;
+      if (lastHoverCoordRef.current.row !== -1) {
+        lastHoverCoordRef.current = { row: -1, col: -1 };
+        if (onHoverTileChange) onHoverTileChange(null);
+      }
     }
   };
 
   const handleMouseLeave = () => {
-    setHoverTile(null);
-    if (onHoverTileChange) onHoverTileChange(null);
+    hoverTileRef.current = null;
+    if (lastHoverCoordRef.current.row !== -1) {
+      lastHoverCoordRef.current = { row: -1, col: -1 };
+      if (onHoverTileChange) onHoverTileChange(null);
+    }
   };
 
   const handleClick = (e) => {
@@ -2102,7 +2483,8 @@ function CityMap({
       clickedCitizen.waveTimer = 120;
       clickedCitizen.highlightTimer = 180;
       clickedCitizen.thoughtTimer = 240;
-      clickedCitizen.thoughtMessage = `${clickedCitizen.name}: "${clickedCitizen.quote}"`;
+      const randomSaying = getRandomCitizenQuote(clickedCitizen, weather, season, grid);
+      clickedCitizen.thoughtMessage = `${clickedCitizen.name}: "${randomSaying}"`;
       playCitizenGreetingSound();
       clickEffectsRef.current.push({ 
         x: clickedCitizen.x * tileSize, 
