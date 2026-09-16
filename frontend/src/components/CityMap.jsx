@@ -367,6 +367,136 @@ function easeOutBack(x) {
   return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
 }
 
+function getTileTooltipData(row, col, grid, comparisonMode, treeMetadata, year) {
+  if (row < 0 || row >= ROWS || col < 0 || col >= COLS) return null;
+  const effectiveType = comparisonMode === 'before' && grid[row][col] === TILE_TREE ? TILE_EMPTY : grid[row][col];
+
+  if (effectiveType === TILE_EMPTY) {
+    return {
+      icon: '🌱',
+      title: 'Open Green Space',
+      badge: 'Plantable',
+      badgeColor: '#81c784',
+      subtitle: 'Lush soil ready for planting trees.'
+    };
+  }
+  if (effectiveType === TILE_TREE) {
+    const key = `${row}_${col}`;
+    const treeData = (treeMetadata && treeMetadata[key]) || { species: 'oak', plantedYear: 1 };
+    const sp = TREE_SPECIES[treeData.species] || TREE_SPECIES.oak;
+    const treeAge = Math.max(0, year - (treeData.plantedYear || 0));
+    const maturity = 1 - Math.exp(-treeAge / (sp.tau || 15));
+    const co2Kg = (500 * maturity * (sp.co2Factor || 21.8)).toFixed(1);
+    return {
+      icon: sp.icon || '🌳',
+      title: `${sp.name} Grove`,
+      badge: sp.badge || 'Urban Tree',
+      badgeColor: '#4ade80',
+      subtitle: `Age: ${treeAge}y • Absorbs ~${co2Kg} kg CO₂/yr`
+    };
+  }
+  if (effectiveType === TILE_ROAD) {
+    return {
+      icon: '🛣️',
+      title: 'City Boulevard',
+      badge: 'Roadway',
+      badgeColor: '#94a3b8',
+      subtitle: 'Asphalt roadway with crosswalks.'
+    };
+  }
+  if (effectiveType === TILE_BRIDGE) {
+    return {
+      icon: '🌉',
+      title: 'Highway Bridge',
+      badge: 'Infrastructure',
+      badgeColor: '#60a5fa',
+      subtitle: 'Concrete bridge across the river.'
+    };
+  }
+  if (effectiveType === TILE_WATER) {
+    return {
+      icon: '🌊',
+      title: 'Grand River',
+      badge: 'Waterway',
+      badgeColor: '#38bdf8',
+      subtitle: 'Natural flowing water cooling the city.'
+    };
+  }
+  if (effectiveType === TILE_HOUSE) {
+    return {
+      icon: '🏡',
+      title: 'Residential Homes',
+      badge: 'Suburban',
+      badgeColor: '#f59e0b',
+      subtitle: 'Single-family homes with gardens.'
+    };
+  }
+  if (effectiveType === TILE_MEDIUM) {
+    return {
+      icon: '🏢',
+      title: 'Commercial Mid-Rise',
+      badge: 'Commercial',
+      badgeColor: '#a78bfa',
+      subtitle: 'Local businesses & apartments.'
+    };
+  }
+  if (effectiveType === TILE_LARGE) {
+    return {
+      icon: '🏙️',
+      title: 'Downtown Highrise',
+      badge: 'Downtown',
+      badgeColor: '#f43f5e',
+      subtitle: 'Glass skyscraper / heat island.'
+    };
+  }
+  if (effectiveType === TILE_CHURCH) {
+    return {
+      icon: '⛪',
+      title: 'St. Jude Cathedral',
+      badge: 'Heritage',
+      badgeColor: '#fbbf24',
+      subtitle: 'Historic stone cathedral & spire.'
+    };
+  }
+  if (effectiveType === TILE_FARM) {
+    return {
+      icon: '🚜',
+      title: 'Sunnybrook Pasture',
+      badge: 'Agriculture',
+      badgeColor: '#84cc16',
+      subtitle: 'Red timber barn & grazing cattle.'
+    };
+  }
+  if (effectiveType === TILE_BENCH) {
+    return {
+      icon: '🪑',
+      title: 'Park Bench',
+      badge: 'Amenity',
+      badgeColor: '#34d399',
+      subtitle: 'Cedar bench under the tree canopy.'
+    };
+  }
+  if (effectiveType === TILE_FOUNTAIN) {
+    return {
+      icon: '⛲',
+      title: 'Plaza Fountain',
+      badge: 'Civic',
+      badgeColor: '#38bdf8',
+      subtitle: 'Tiered fountain cooling the plaza.'
+    };
+  }
+  if (effectiveType === TILE_PLAYGROUND) {
+    return {
+      icon: '🎠',
+      title: 'Community Playground',
+      badge: 'Recreation',
+      badgeColor: '#ec4899',
+      subtitle: 'Swings, slide, and shade trees.'
+    };
+  }
+  return null;
+}
+
 function CityMap({ 
   grid, 
   year, 
@@ -385,6 +515,8 @@ function CityMap({
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
   const hoverTileRef = useRef(null);
+  const popupRef = useRef(null);
+  const lastPopupTileKey = useRef('');
   const [zoom, setZoom] = useState(1.0);
 
   // Entities and systems
@@ -2431,13 +2563,49 @@ function CityMap({
 
     if (row >= 0 && row < ROWS && col >= 0 && col < COLS) {
       hoverTileRef.current = { row, col };
+
+      const popup = popupRef.current;
+      if (popup) {
+        const tileKey = `${row}_${col}_${grid[row][col]}_${year}`;
+        if (tileKey !== lastPopupTileKey.current) {
+          lastPopupTileKey.current = tileKey;
+          const data = getTileTooltipData(row, col, grid, comparisonMode, treeMetadata, year);
+          if (data) {
+            popup.innerHTML = `
+              <div class="popup-header">
+                <span class="popup-icon">${data.icon}</span>
+                <span class="popup-title">${data.title}</span>
+                <span class="popup-coord">[${row}, ${col}]</span>
+                <span class="popup-badge" style="color: ${data.badgeColor}; border-color: ${data.badgeColor}66; background: ${data.badgeColor}20;">${data.badge}</span>
+              </div>
+              <div class="popup-subtitle">${data.subtitle}</div>
+            `;
+          }
+        }
+        // Floating position with edge awareness
+        const popupWidth = 280;
+        const popupHeight = 60;
+        let x = e.clientX + 14;
+        let y = e.clientY + 14;
+        if (x + popupWidth > window.innerWidth - 12) {
+          x = e.clientX - popupWidth - 14;
+        }
+        if (y + popupHeight > window.innerHeight - 12) {
+          y = e.clientY - popupHeight - 14;
+        }
+        popup.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+        popup.style.opacity = '1';
+      }
     } else {
       hoverTileRef.current = null;
+      if (popupRef.current) popupRef.current.style.opacity = '0';
     }
   };
 
   const handleMouseLeave = () => {
     hoverTileRef.current = null;
+    lastPopupTileKey.current = '';
+    if (popupRef.current) popupRef.current.style.opacity = '0';
   };
 
   const handleClick = (e) => {
@@ -2583,6 +2751,9 @@ function CityMap({
         onContextMenu={handleContextMenu}
         style={{ cursor: 'pointer' }}
       />
+
+      {/* Modern floating cursor pop-up that never causes layout shifts or shaking */}
+      <div ref={popupRef} className="city-floating-popup" />
     </div>
   );
 }
