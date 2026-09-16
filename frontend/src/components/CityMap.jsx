@@ -2,6 +2,7 @@ import { useRef, useEffect, useCallback, useState } from 'react';
 import { 
   TILE_EMPTY, TILE_ROAD, TILE_HOUSE, TILE_MEDIUM, TILE_LARGE, 
   TILE_TREE, TILE_WATER, TILE_BRIDGE, TILE_CHURCH, TILE_FARM, 
+  TILE_BENCH, TILE_FOUNTAIN, TILE_PLAYGROUND,
   ROWS, COLS, INTERSECTIONS 
 } from '../data/cityLayout';
 import { TREE_SPECIES } from '../data/treeSpecies';
@@ -10,7 +11,8 @@ import {
   playChurchBellSound, 
   playCowMooSound, 
   playCarHonkSound, 
-  playWaterSplashSound 
+  playWaterSplashSound,
+  playCitizenGreetingSound
 } from '../utils/audio';
 
 const COLORS = {
@@ -31,6 +33,33 @@ const COLORS = {
 
 const CAR_COLORS = ['#e74c3c', '#f39c12', '#3498db', '#ecf0f1', '#9b59b6', '#1abc9c', '#f1c40f'];
 const SHIRT_COLORS = ['#e67e22', '#2ecc71', '#e74c3c', '#9b59b6', '#3498db', '#f39c12'];
+
+const CITIZEN_PROFILES = [
+  { id: 1, name: 'Sofia', quote: 'The air is so crisp under this oak grove!', shirt: '#e74c3c', skin: '#f5d0b0', hasDog: true, dogOffset: -0.35, umbrella: '#e74c3c' },
+  { id: 2, name: 'Liam', quote: 'It feels at least 3 degrees cooler near the trees!', shirt: '#3498db', skin: '#8d5524', hasDog: false, umbrella: '#3498db' },
+  { id: 3, name: 'Maya', quote: 'Best spot in the city to read under the canopy.', shirt: '#2ecc71', skin: '#c68642', hasDog: false, umbrella: '#2ecc71' },
+  { id: 4, name: 'Marcus', quote: 'Our municipal tree coverage looks wonderful today!', shirt: '#9b59b6', skin: '#e0ac69', hasDog: true, dogOffset: 0.35, umbrella: '#9b59b6' },
+  { id: 5, name: 'Emma', quote: 'Bella loves trotting through the cool shade.', shirt: '#f39c12', skin: '#ffdbac', hasDog: true, dogOffset: -0.4, umbrella: '#f1c40f' },
+  { id: 6, name: 'Noah', quote: 'The fountain plaza and trees make this city alive.', shirt: '#1abc9c', skin: '#59381e', hasDog: false, umbrella: '#00cec9' },
+  { id: 7, name: 'Olivia', quote: 'The playground is so much safer with canopy shade!', shirt: '#e91e63', skin: '#f5d0b0', hasDog: false, umbrella: '#ff7675' },
+  { id: 8, name: 'Lucas', quote: 'Walking the boulevard is a breeze in the shade.', shirt: '#3f51b5', skin: '#8d5524', hasDog: false, umbrella: '#3498db' },
+  { id: 9, name: 'Chloe', quote: 'I love stopping to chat with neighbors here.', shirt: '#00bcd4', skin: '#c68642', hasDog: false, umbrella: '#00bcd4' },
+  { id: 10, name: 'Ethan', quote: 'My favorite jogging loop passes right by the oaks.', shirt: '#ff5722', skin: '#e0ac69', hasDog: false, umbrella: '#ff7675' },
+  { id: 11, name: 'Ava', quote: 'Canopy cover keeps rainwater from flooding paths.', shirt: '#8bc34a', skin: '#ffdbac', hasDog: false, umbrella: '#2ecc71' },
+  { id: 12, name: 'Leo', quote: 'A peaceful afternoon resting on the cedar bench.', shirt: '#673ab7', skin: '#59381e', hasDog: false, umbrella: '#9b59b6' },
+  { id: 13, name: 'Mia', quote: 'The blossom petals drifting down are so serene.', shirt: '#e84393', skin: '#f5d0b0', hasDog: true, dogOffset: 0.35, umbrella: '#e84393' },
+  { id: 14, name: 'Aiden', quote: 'Our air quality index is getting cleaner each year!', shirt: '#00cec9', skin: '#8d5524', hasDog: false, umbrella: '#00cec9' },
+  { id: 15, name: 'Harper', quote: 'Rain or shine, the trees keep the boulevard calm.', shirt: '#fdcb6e', skin: '#c68642', hasDog: false, umbrella: '#f1c40f' },
+  { id: 16, name: 'Jayden', quote: 'More trees mean cooler streets and happier folks!', shirt: '#d63031', skin: '#e0ac69', hasDog: false, umbrella: '#e74c3c' },
+  { id: 17, name: 'Zara', quote: 'I love sketching these beautiful maple leaves.', shirt: '#6c5ce7', skin: '#ffdbac', hasDog: false, umbrella: '#9b59b6' },
+  { id: 18, name: 'Benjamin', quote: 'Back in my day this was concrete. Now look at it!', shirt: '#636e72', skin: '#f5d0b0', hasDog: false, umbrella: '#34495e' },
+  { id: 19, name: 'Ella', quote: 'Luna wagged her tail the whole walk through the park!', shirt: '#00b894', skin: '#8d5524', hasDog: true, dogOffset: -0.35, umbrella: '#2ecc71' },
+  { id: 20, name: 'James', quote: 'Urban forestry is the smartest investment for us.', shirt: '#0984e3', skin: '#c68642', hasDog: false, umbrella: '#3498db' },
+  { id: 21, name: 'Amara', quote: 'The pine fragrance in the morning breeze is heavenly.', shirt: '#e17055', skin: '#e0ac69', hasDog: false, umbrella: '#ff7675' },
+  { id: 22, name: 'Henry', quote: 'Cathedral bells chime so sweetly through the trees.', shirt: '#2d3436', skin: '#ffdbac', hasDog: false, umbrella: '#34495e' },
+  { id: 23, name: 'Grace', quote: 'Feeding the ducks by the pond is pure relaxation.', shirt: '#a29bfe', skin: '#59381e', hasDog: false, umbrella: '#a29bfe' },
+  { id: 24, name: 'Oliver', quote: 'Air Quality is in the green zone today!', shirt: '#ffeaa7', skin: '#f5d0b0', hasDog: false, umbrella: '#f1c40f' },
+];
 
 function getTreeStage(age) {
   if (age <= 2) return 'seedling';
@@ -71,7 +100,7 @@ function CityMap({
   const humansRef = useRef([]);
   const cowsRef = useRef([]);
   const ducksRef = useRef([]);
-  const bargeRef = useRef({ y: -4, col: 14.8, speed: 0.015 });
+  const bargeRef = useRef({ y: -4, col: 17.5, speed: 0.015 });
   const rainDropsRef = useRef([]);
   const ripplesRef = useRef([]);
   const splashesRef = useRef([]);
@@ -83,9 +112,9 @@ function CityMap({
   const waterTimeRef = useRef(0);
 
   const getBaseTileSize = useCallback(() => {
-    if (!containerRef.current) return 36;
-    const containerWidth = containerRef.current.clientWidth - 48;
-    return Math.max(26, Math.min(50, Math.floor(containerWidth / COLS)));
+    const width = containerRef.current?.clientWidth || (typeof window !== 'undefined' ? window.innerWidth - 80 : 960);
+    const containerWidth = Math.max(600, width - 48);
+    return Math.max(26, Math.min(52, Math.floor(containerWidth / COLS)));
   }, []);
 
   const getEffectiveTileSize = useCallback(() => {
@@ -94,8 +123,8 @@ function CityMap({
 
   // Initialize Cars, Humans, Dogs, Cows, Ducks, and Weather Particles
   useEffect(() => {
-    const hRoads = [3, 8, 13];
-    const vRoads = [4, 9, 18];
+    const hRoads = [4, 11, 18];
+    const vRoads = [6, 14, 24];
 
     const initialCars = [];
     hRoads.forEach((row, i) => {
@@ -132,29 +161,65 @@ function CityMap({
     });
     carsRef.current = initialCars;
 
-    const initialHumans = [
-      { x: 1.5, y: 1.5, vx: 0.015, vy: 0, shirt: SHIRT_COLORS[0], hasDog: true, dogOffset: -0.4, isWaiting: false },
-      { x: 3.5, y: 8.5, vx: 0.018, vy: 0, shirt: SHIRT_COLORS[1], hasDog: false, isWaiting: false },
-      { x: 12.5, y: 1.5, vx: 0, vy: 0.015, shirt: SHIRT_COLORS[2], hasDog: true, dogOffset: 0.4, isWaiting: false },
-      { x: 20.5, y: 9.5, vx: -0.016, vy: 0, shirt: SHIRT_COLORS[3], hasDog: false, isWaiting: false },
-      { x: 8.5, y: 14.5, vx: 0.014, vy: 0, shirt: SHIRT_COLORS[4], hasDog: true, dogOffset: -0.35, isWaiting: false },
-      { x: 17.5, y: 3.5, vx: -0.015, vy: 0, shirt: SHIRT_COLORS[5], hasDog: true, dogOffset: 0.35, isWaiting: false },
+    const initialPositions = [
+      { x: 1.5, y: 1.5, vx: 0.012, vy: 0, state: 'walking' },
+      { x: 8.5, y: 3.5, vx: 0, vy: 0, state: 'sitting', sitTimer: 280, activity: '📖' }, // bench row 3 col 8
+      { x: 10.5, y: 1.5, vx: 0.014, vy: 0, state: 'walking' },
+      { x: 20.5, y: 5.5, vx: 0, vy: 0, state: 'sitting', sitTimer: 340, activity: '☕' }, // bench row 5 col 20
+      { x: 13.5, y: 7.5, vx: 0.015, vy: 0, state: 'walking' },
+      { x: 2.5, y: 7.5, vx: 0.01, vy: 0.01, state: 'walking' }, // playground
+      { x: 20.5, y: 3.5, vx: -0.013, vy: 0, state: 'walking' },
+      { x: 26.5, y: 2.5, vx: 0.012, vy: 0, state: 'walking' },
+      { x: 8.5, y: 10.5, vx: 0, vy: 0, state: 'sitting', sitTimer: 250, activity: '🥪' }, // bench row 10 col 8
+      { x: 12.5, y: 10.5, vx: 0, vy: 0, state: 'sitting', sitTimer: 300, activity: '📖' }, // bench row 10 col 12
+      { x: 10.5, y: 14.5, vx: 0.008, vy: 0.006, state: 'walking' }, // fountain plaza
+      { x: 8.5, y: 13.5, vx: 0, vy: 0, state: 'sitting', sitTimer: 220, activity: '☕' }, // bench row 13 col 8
+      { x: 12.5, y: 13.5, vx: 0, vy: 0, state: 'sitting', sitTimer: 310, activity: '📖' }, // bench row 13 col 12
+      { x: 8.5, y: 15.5, vx: 0, vy: 0, state: 'sitting', sitTimer: 200, activity: '☕' }, // bench row 15 col 8
+      { x: 12.5, y: 15.5, vx: 0, vy: 0, state: 'sitting', sitTimer: 330, activity: '🥪' }, // bench row 15 col 12
+      { x: 7.5, y: 12.5, vx: 0.015, vy: 0, state: 'walking' },
+      { x: 15.5, y: 12.5, vx: -0.014, vy: 0, state: 'walking' },
+      { x: 21.5, y: 9.5, vx: 0.013, vy: 0, state: 'walking' },
+      { x: 27.5, y: 12.5, vx: -0.015, vy: 0, state: 'walking' },
+      { x: 3.5, y: 20.5, vx: 0.01, vy: 0.008, state: 'walking' }, // south schoolyard playground
+      { x: 4.5, y: 21.5, vx: 0, vy: 0, state: 'sitting', sitTimer: 260, activity: '📖' }, // bench row 21 col 4
+      { x: 10.5, y: 19.5, vx: 0.012, vy: 0, state: 'walking' },
+      { x: 15.5, y: 20.5, vx: -0.013, vy: 0, state: 'walking' },
+      { x: 23.5, y: 16.5, vx: 0.011, vy: 0, state: 'walking' },
     ];
+
+    const initialHumans = CITIZEN_PROFILES.map((prof, idx) => {
+      const pos = initialPositions[idx] || { x: 5 + (idx % 20), y: 5 + Math.floor(idx / 2), vx: 0.012, vy: 0, state: 'walking' };
+      return {
+        ...prof,
+        ...pos,
+        origVx: pos.vx || 0.013,
+        origVy: pos.vy || 0,
+        isWaiting: false,
+        isWaving: false,
+        waveTimer: 0,
+        chatTimer: 0,
+        chatMessage: null,
+        thoughtTimer: 0,
+        thoughtMessage: null,
+        highlightTimer: 0,
+      };
+    });
     humansRef.current = initialHumans;
 
     const initialCows = [
-      { x: 21.2, y: 14.6, chewingPhase: 0, tailPhase: 0.2, dir: 1 },
-      { x: 22.4, y: 15.3, chewingPhase: 1.5, tailPhase: 2.1, dir: -1 },
-      { x: 20.8, y: 16.4, chewingPhase: 3.2, tailPhase: 0.8, dir: 1 },
-      { x: 22.7, y: 17.2, chewingPhase: 0.8, tailPhase: 1.4, dir: -1 },
+      { x: 27.2, y: 20.6, chewingPhase: 0, tailPhase: 0.2, dir: 1 },
+      { x: 28.6, y: 21.4, chewingPhase: 1.5, tailPhase: 2.1, dir: -1 },
+      { x: 26.8, y: 22.2, chewingPhase: 3.2, tailPhase: 0.8, dir: 1 },
+      { x: 29.3, y: 22.7, chewingPhase: 0.8, tailPhase: 1.4, dir: -1 },
     ];
     cowsRef.current = initialCows;
 
     // Swimming river ducks 🦆
     const initialDucks = [
-      { x: 14.4, y: 1.2, vx: 0.008, vy: 0.004, phase: 0 },
-      { x: 15.2, y: 4.8, vx: -0.006, vy: 0.007, phase: 1.5 },
-      { x: 15.7, y: 10.4, vx: 0.005, vy: 0.008, phase: 3.0 },
+      { x: 17.4, y: 1.8, vx: 0.007, vy: 0.004, phase: 0 },
+      { x: 18.2, y: 6.5, vx: -0.006, vy: 0.006, phase: 1.5 },
+      { x: 17.7, y: 13.2, vx: 0.005, vy: 0.007, phase: 3.0 },
     ];
     ducksRef.current = initialDucks;
 
@@ -435,6 +500,176 @@ function CityMap({
     ctx.fillStyle = COLORS.hay;
     ctx.fillRect(x + size * 0.75, y + size * 0.7, size * 0.15, size * 0.12);
   };
+
+  const drawBench = (ctx, x, y, size) => {
+    // Paved stone pad
+    ctx.fillStyle = '#d5dbdb';
+    ctx.fillRect(x + size * 0.15, y + size * 0.35, size * 0.7, size * 0.45);
+    ctx.strokeStyle = '#bdc3c7';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x + size * 0.15, y + size * 0.35, size * 0.7, size * 0.45);
+
+    // Cedar bench slats
+    const bw = size * 0.5;
+    const bh = size * 0.22;
+    const bx = x + size * 0.25;
+    const by = y + size * 0.45;
+
+    // Bench shadow
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+    ctx.fillRect(bx, by + bh, bw, 2);
+
+    // Wooden slats
+    ctx.fillStyle = '#a0522d';
+    ctx.fillRect(bx, by, bw, bh * 0.35); // backrest
+    ctx.fillRect(bx, by + bh * 0.45, bw, bh * 0.4); // seat
+
+    // Iron armrests & legs
+    ctx.fillStyle = '#2c3e50';
+    ctx.fillRect(bx - 2, by, 2.5, bh + 3);
+    ctx.fillRect(bx + bw, by, 2.5, bh + 3);
+    ctx.fillRect(bx + bw * 0.5 - 1, by, 2, bh + 3);
+
+    // Decorative flowers beside bench
+    ctx.fillStyle = '#e91e63';
+    ctx.beginPath();
+    ctx.arc(x + size * 0.18, y + size * 0.4, 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#f1c40f';
+    ctx.beginPath();
+    ctx.arc(x + size * 0.82, y + size * 0.65, 2, 0, Math.PI * 2);
+    ctx.fill();
+  };
+
+  const drawFountain = (ctx, x, y, size, time) => {
+    const cx = x + size / 2;
+    const cy = y + size / 2;
+    const r = size * 0.42;
+
+    // Plaza circular cobblestone paving
+    ctx.fillStyle = '#bdc3c7';
+    ctx.beginPath();
+    ctx.arc(cx, cy, r + 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#95a5a6';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Outer granite basin
+    ctx.fillStyle = '#7f8c8d';
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Sparkling pool water with gradient
+    const waterGrad = ctx.createRadialGradient(cx, cy, 2, cx, cy, r - 3);
+    waterGrad.addColorStop(0, '#81d4fa');
+    waterGrad.addColorStop(1, '#0288d1');
+    ctx.fillStyle = waterGrad;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r - 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Animated water ripples
+    const ripplePulse = (time * 0.003) % 1;
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(cx, cy, (r - 4) * ripplePulse, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Center marble pedestal
+    ctx.fillStyle = '#ecf0f1';
+    ctx.beginPath();
+    ctx.arc(cx, cy, size * 0.12, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Central spraying water jet
+    const jetHeight = Math.sin(time * 0.008) * 3 + 6;
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+    ctx.beginPath();
+    ctx.arc(cx, cy - jetHeight, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Splash droplets
+    for (let a = 0; a < 4; a++) {
+      const angle = a * (Math.PI / 2) + time * 0.004;
+      const dist = size * 0.22;
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+      ctx.fillRect(cx + Math.cos(angle) * dist, cy + Math.sin(angle) * dist, 1.5, 1.5);
+    }
+  };
+
+  const drawPlayground = (ctx, x, y, size, time) => {
+    // Soft sand / wood mulch pit
+    ctx.fillStyle = '#f0e68c';
+    ctx.fillRect(x + 2, y + 2, size - 4, size - 4);
+    ctx.strokeStyle = '#d4ac0d';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(x + 2, y + 2, size - 4, size - 4);
+
+    // 1. Swing Set on the left
+    const sx = x + size * 0.25;
+    const sy = y + size * 0.25;
+    const sw = size * 0.35;
+    const sh = size * 0.55;
+
+    // Swing A-frame beams (Red)
+    ctx.strokeStyle = '#e74c3c';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    // Left beam
+    ctx.moveTo(sx - 4, sy + sh);
+    ctx.lineTo(sx, sy);
+    ctx.lineTo(sx + 4, sy + sh);
+    // Right beam
+    ctx.moveTo(sx + sw - 4, sy + sh);
+    ctx.lineTo(sx + sw, sy);
+    ctx.lineTo(sx + sw + 4, sy + sh);
+    // Top bar
+    ctx.moveTo(sx - 5, sy);
+    ctx.lineTo(sx + sw + 5, sy);
+    ctx.stroke();
+
+    // Swinging seats suspended by chains
+    const swingAngle = Math.sin(time * 0.005) * 0.25;
+    const chainLen = sh * 0.65;
+    const seatX1 = sx + sw * 0.35 + Math.sin(swingAngle) * 4;
+    const seatX2 = sx + sw * 0.75 - Math.sin(swingAngle) * 4;
+
+    ctx.strokeStyle = '#7f8c8d';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(sx + sw * 0.35, sy);
+    ctx.lineTo(seatX1, sy + chainLen);
+    ctx.moveTo(sx + sw * 0.75, sy);
+    ctx.lineTo(seatX2, sy + chainLen);
+    ctx.stroke();
+
+    // Seats
+    ctx.fillStyle = '#3498db';
+    ctx.fillRect(seatX1 - 3, sy + chainLen, 6, 2);
+    ctx.fillRect(seatX2 - 3, sy + chainLen, 6, 2);
+
+    // 2. Bright Yellow Slide on the right
+    const lx = x + size * 0.7;
+    const ly = y + size * 0.3;
+    // Ladder
+    ctx.strokeStyle = '#34495e';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(lx, ly + size * 0.5);
+    ctx.lineTo(lx, ly);
+    ctx.stroke();
+    // Slide chute
+    ctx.strokeStyle = '#f1c40f';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(lx, ly);
+    ctx.quadraticCurveTo(lx + size * 0.12, ly + size * 0.3, lx + size * 0.22, ly + size * 0.5);
+    ctx.stroke();
+  };
+
 
   // --- Seasonal & Species Tree Rendering ---
   // --- Botanical Species & Seasonal Tree Rendering ---
@@ -822,7 +1057,7 @@ function CityMap({
       duck.x += duck.vx;
       duck.y += duck.vy;
 
-      if (duck.x < 14.1 || duck.x > 15.9) duck.vx *= -1;
+      if (duck.x < 16.8 || duck.x > 18.8) duck.vx *= -1;
       if (duck.y < 1.0 || duck.y > ROWS - 1) duck.vy *= -1;
 
       const dx = duck.x * tileSize;
@@ -850,8 +1085,8 @@ function CityMap({
   };
 
   const drawCars = (ctx, tileSize, signals) => {
-    const vCols = [4, 9, 18];
-    const hRows = [3, 8, 13];
+    const vCols = [6, 14, 24];
+    const hRows = [4, 11, 18];
 
     carsRef.current.forEach(car => {
       let mustStop = false;
@@ -1007,55 +1242,207 @@ function CityMap({
     });
   };
 
-  const drawHumansAndDogs = (ctx, tileSize, time, signals) => {
-    humansRef.current.forEach(human => {
-      const nearHRoad = [3, 8, 13].some(r => Math.abs(human.y - r) < 0.6);
-      if (nearHRoad && signals.pedH === 'stop') {
+  const drawHumansAndDogs = (ctx, tileSize, time, signals, effectiveGrid = grid) => {
+    const isHotOrSunny = weather === 'sunny' && (season === 'summer' || activeEvent?.id === 'heatwave');
+    const hRoads = [4, 11, 18];
+
+    humansRef.current.forEach((human, idx) => {
+      // 1. Crosswalk waiting
+      const nearHRoad = hRoads.some(r => Math.abs(human.y - r) < 0.6);
+      if (nearHRoad && signals.pedH === 'stop' && human.state === 'walking') {
         human.isWaiting = true;
       } else {
         human.isWaiting = false;
+      }
+
+      // 2. Timer updates
+      if (human.waveTimer > 0) human.waveTimer--;
+      if (human.highlightTimer > 0) human.highlightTimer--;
+      if (human.thoughtTimer > 0) human.thoughtTimer--;
+
+      if (human.state === 'chatting') {
+        if (human.chatTimer > 0) {
+          human.chatTimer--;
+        } else {
+          human.state = 'walking';
+          human.chatMessage = null;
+        }
+      } else if (human.state === 'sitting') {
+        if (human.sitTimer > 0) {
+          human.sitTimer--;
+        } else {
+          human.state = 'walking';
+          human.vx = human.origVx || 0.012;
+          human.vy = human.origVy || 0;
+        }
+      } else if (human.state === 'seeking_shade') {
+        if (human.shadeTimer > 0) {
+          human.shadeTimer--;
+        } else {
+          human.state = 'walking';
+          human.vx = human.origVx || 0.012;
+          human.vy = human.origVy || 0;
+        }
+      } else if (human.state === 'walking' && !human.isWaiting) {
+        // --- A. Tree Shade Seeking Behavior ---
+        if (isHotOrSunny && Math.random() < 0.02) {
+          // Scan for nearby tree within 3.5 tiles
+          let closestTree = null;
+          let minDist = 4.0;
+          const currR = Math.round(human.y);
+          const currC = Math.round(human.x);
+
+          for (let dr = -3; dr <= 3; dr++) {
+            for (let dc = -3; dc <= 3; dc++) {
+              const tr = currR + dr;
+              const tc = currC + dc;
+              if (tr >= 0 && tr < ROWS && tc >= 0 && tc < COLS && effectiveGrid[tr]?.[tc] === TILE_TREE) {
+                const dist = Math.hypot(human.x - (tc + 0.5), human.y - (tr + 0.5));
+                if (dist < minDist) {
+                  minDist = dist;
+                  closestTree = { r: tr, c: tc, dist };
+                }
+              }
+            }
+          }
+
+          if (closestTree) {
+            if (closestTree.dist < 0.6) {
+              human.state = 'seeking_shade';
+              human.shadeTimer = 180 + Math.floor(Math.random() * 120);
+              human.thoughtMessage = '🌳 Cool shade!';
+              human.thoughtTimer = 140;
+            } else {
+              // Steer gently toward tree
+              const angle = Math.atan2(closestTree.r + 0.5 - human.y, closestTree.c + 0.5 - human.x);
+              human.vx = Math.cos(angle) * 0.014;
+              human.vy = Math.sin(angle) * 0.014;
+            }
+          }
+        }
+
+        // --- B. Park Bench Resting Behavior ---
+        if (Math.random() < 0.03) {
+          const currR = Math.round(human.y);
+          const currC = Math.round(human.x);
+          if (effectiveGrid[currR]?.[currC] === TILE_BENCH) {
+            human.state = 'sitting';
+            human.sitTimer = 240 + Math.floor(Math.random() * 140);
+            human.activity = Math.random() > 0.5 ? '📖' : '☕';
+            human.x = currC + 0.5;
+            human.y = currR + 0.5;
+          }
+        }
+
+        // --- C. Chatting with nearby citizens ---
+        if (Math.random() < 0.015) {
+          const neighbor = humansRef.current.find((other, oIdx) => 
+            oIdx !== idx && other.state === 'walking' && !other.isWaiting &&
+            Math.hypot(other.x - human.x, other.y - human.y) < 0.75
+          );
+          if (neighbor) {
+            human.state = 'chatting';
+            human.chatTimer = 160;
+            human.chatMessage = 'Love these trees! 🌳';
+            neighbor.state = 'chatting';
+            neighbor.chatTimer = 160;
+            neighbor.chatMessage = 'So fresh! 😊';
+          }
+        }
+
+        // Apply walking movement
         human.x += human.vx;
         human.y += human.vy;
       }
 
-      if (human.x < 0.5 || human.x > COLS - 1) human.vx *= -1;
-      if (human.y < 0.5 || human.y > ROWS - 1) human.vy *= -1;
+      // Map boundary rebound
+      if (human.x < 0.6) { human.x = 0.6; human.vx = Math.abs(human.vx); }
+      if (human.x > COLS - 0.6) { human.x = COLS - 0.6; human.vx = -Math.abs(human.vx); }
+      if (human.y < 0.6) { human.y = 0.6; human.vy = Math.abs(human.vy); }
+      if (human.y > ROWS - 0.6) { human.y = ROWS - 0.6; human.vy = -Math.abs(human.vy); }
 
       const px = human.x * tileSize;
       const py = human.y * tileSize;
-      const step = human.isWaiting ? 0 : Math.sin(time * 0.012) * 2;
+      const isWalking = human.state === 'walking' && !human.isWaiting;
+      const step = isWalking ? Math.sin(time * 0.012 + idx) * 2.2 : 0;
+      const isSitting = human.state === 'sitting';
 
       ctx.save();
+
+      // Golden Click Highlight Aura
+      if (human.highlightTimer > 0) {
+        ctx.strokeStyle = `rgba(241, 196, 15, ${human.highlightTimer / 160})`;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(px, py + 2, 9 + Math.sin(time * 0.02) * 2, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      // Ground Shadow
       ctx.fillStyle = 'rgba(0,0,0,0.25)';
       ctx.beginPath();
-      ctx.ellipse(px, py + tileSize * 0.2, 4, 2, 0, 0, Math.PI * 2);
+      ctx.ellipse(px, py + (isSitting ? 4 : tileSize * 0.2), isSitting ? 5 : 4, 2, 0, 0, Math.PI * 2);
       ctx.fill();
 
-      ctx.fillStyle = human.shirt;
-      ctx.fillRect(px - 2.5, py - 4, 5, 6);
+      // Torso / Shirt
+      ctx.fillStyle = human.shirt || '#3498db';
+      if (isSitting) {
+        ctx.fillRect(px - 3, py - 3, 6, 5);
+      } else {
+        ctx.fillRect(px - 2.5, py - 4, 5, 6);
+      }
 
-      ctx.fillStyle = '#ffcc80';
+      // Head & Skin Tone
+      ctx.fillStyle = human.skin || '#ffcc80';
       ctx.beginPath();
-      ctx.arc(px, py - 7, 3, 0, Math.PI * 2);
+      ctx.arc(px, isSitting ? py - 5 : py - 7, 3, 0, Math.PI * 2);
       ctx.fill();
 
+      // Legs
       ctx.strokeStyle = '#37474f';
       ctx.lineWidth = 1.5;
       ctx.beginPath();
-      ctx.moveTo(px - 1.5, py + 2);
-      ctx.lineTo(px - 1.5 + step, py + 6);
-      ctx.moveTo(px + 1.5, py + 2);
-      ctx.lineTo(px + 1.5 - step, py + 6);
+      if (isSitting) {
+        // Seated bent legs
+        ctx.moveTo(px - 2, py + 2);
+        ctx.lineTo(px - 2, py + 4);
+        ctx.lineTo(px, py + 4);
+        ctx.moveTo(px + 2, py + 2);
+        ctx.lineTo(px + 2, py + 4);
+        ctx.lineTo(px + 4, py + 4);
+      } else {
+        ctx.moveTo(px - 1.5, py + 2);
+        ctx.lineTo(px - 1.5 + step, py + 6);
+        ctx.moveTo(px + 1.5, py + 2);
+        ctx.lineTo(px + 1.5 - step, py + 6);
+      }
       ctx.stroke();
 
-      if (human.hasDog) {
+      // Waving Arm Animation (when clicked or greeting)
+      if (human.waveTimer > 0) {
+        const waveAngle = Math.sin(time * 0.03) * 0.5;
+        ctx.strokeStyle = human.shirt || '#3498db';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(px + 2.5, py - 2);
+        ctx.lineTo(px + 6 + Math.cos(waveAngle) * 3, py - 8 + Math.sin(waveAngle) * 4);
+        ctx.stroke();
+        // Hand
+        ctx.fillStyle = human.skin || '#ffcc80';
+        ctx.beginPath();
+        ctx.arc(px + 6 + Math.cos(waveAngle) * 3, py - 8 + Math.sin(waveAngle) * 4, 1.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Dog Walking Companion
+      if (human.hasDog && !isSitting) {
         const dx = px + (human.dogOffset * tileSize);
         const dy = py + 3;
-        const tailWag = Math.sin(time * 0.02) * 2.5;
+        const tailWag = Math.sin(time * 0.025 + idx) * 2.5;
 
         ctx.fillStyle = 'rgba(0,0,0,0.2)';
         ctx.beginPath();
-        ctx.ellipse(dx, dy + 3, 3, 1.5, 0, 0, Math.PI * 2);
+        ctx.ellipse(dx, dy + 3, 3.5, 1.8, 0, 0, Math.PI * 2);
         ctx.fill();
 
         ctx.fillStyle = '#c68a4c';
@@ -1081,6 +1468,77 @@ function CityMap({
         ctx.lineTo(dx + 2, dy + 3.5);
         ctx.stroke();
       }
+
+      // Rain Reaction: Open Umbrella ☔
+      if (weather === 'rainy') {
+        const umbColor = human.umbrella || '#3498db';
+        const uy = py - (isSitting ? 10 : 13);
+
+        // Umbrella Shaft & Handle
+        ctx.strokeStyle = '#5d6d7e';
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(px, uy + 1);
+        ctx.lineTo(px, py - 2);
+        ctx.stroke();
+
+        // Umbrella Canopy Dome
+        ctx.fillStyle = umbColor;
+        ctx.beginPath();
+        ctx.arc(px, uy, 8, Math.PI, 0);
+        ctx.closePath();
+        ctx.fill();
+
+        // Tip finial
+        ctx.fillStyle = '#ecf0f1';
+        ctx.fillRect(px - 0.7, uy - 9.5, 1.4, 2);
+
+        // Splash on umbrella top
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+        ctx.fillRect(px - 1, uy - 8, 2, 1);
+      }
+
+      // Bench Sitting Activity Icon (e.g. reading 📖 or coffee ☕)
+      if (isSitting && human.activity) {
+        ctx.font = '10px sans-serif';
+        ctx.fillText(human.activity, px + 5, py - 4);
+      }
+
+      // Speech & Thought Bubbles 💬
+      const activeText = (human.highlightTimer > 0 && human.thoughtMessage)
+        ? human.thoughtMessage
+        : human.chatMessage || (human.thoughtTimer > 0 ? human.thoughtMessage : null);
+
+      if (activeText) {
+        ctx.font = 'bold 9px sans-serif';
+        const textWidth = ctx.measureText(activeText).width;
+        const bw = textWidth + 10;
+        const bh = 15;
+        const bx = px - bw / 2;
+        const by = py - (weather === 'rainy' ? 24 : 18) - bh;
+
+        // Bubble rounded background
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+        ctx.strokeStyle = '#2c3e50';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect(bx, by, bw, bh, 4);
+        ctx.fill();
+        ctx.stroke();
+
+        // Pointer triangle
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+        ctx.beginPath();
+        ctx.moveTo(px - 3, by + bh);
+        ctx.lineTo(px, by + bh + 4);
+        ctx.lineTo(px + 3, by + bh);
+        ctx.fill();
+
+        // Text
+        ctx.fillStyle = '#2c3e50';
+        ctx.fillText(activeText, bx + 5, by + 11);
+      }
+
       ctx.restore();
     });
   };
@@ -1459,6 +1917,12 @@ function CityMap({
             const treeAge = Math.max(1, year - plantedYear + 1);
 
             drawTree(ctx, x, y, tileSize, speciesId, treeAge, activeAnim, currentTime);
+          } else if (tile === TILE_BENCH) {
+            drawBench(ctx, x, y, tileSize);
+          } else if (tile === TILE_FOUNTAIN) {
+            drawFountain(ctx, x, y, tileSize, currentTime);
+          } else if (tile === TILE_PLAYGROUND) {
+            drawPlayground(ctx, x, y, tileSize, currentTime);
           }
         }
 
@@ -1478,7 +1942,7 @@ function CityMap({
     drawCars(ctx, tileSize, signals);
 
     // 5. Pedestrians
-    drawHumansAndDogs(ctx, tileSize, currentTime, signals);
+    drawHumansAndDogs(ctx, tileSize, currentTime, signals, effectiveGrid);
 
     // 6. Thermal Heatmap Shader
     if (isHeatmapActive) {
@@ -1624,6 +2088,30 @@ function CityMap({
     const tileSize = getEffectiveTileSize();
     const clickX = (col + 0.5) * tileSize;
     const clickY = (row + 0.5) * tileSize;
+    const clickColExact = (e.clientX - rect.left) * (COLS / rect.width);
+    const clickRowExact = (e.clientY - rect.top) * (ROWS / rect.height);
+
+    // 1. Check if clicked on a citizen!
+    const clickedCitizen = humansRef.current.find(h => {
+      const dist = Math.hypot(h.x - clickColExact, h.y - clickRowExact);
+      return dist < 0.85;
+    });
+
+    if (clickedCitizen) {
+      clickedCitizen.isWaving = true;
+      clickedCitizen.waveTimer = 120;
+      clickedCitizen.highlightTimer = 180;
+      clickedCitizen.thoughtTimer = 240;
+      clickedCitizen.thoughtMessage = `${clickedCitizen.name}: "${clickedCitizen.quote}"`;
+      playCitizenGreetingSound();
+      clickEffectsRef.current.push({ 
+        x: clickedCitizen.x * tileSize, 
+        y: (clickedCitizen.y - 0.7) * tileSize, 
+        text: `👋 Hi from ${clickedCitizen.name}!` 
+      });
+      return;
+    }
+
     const tile = grid[row][col];
 
     // Interactive Landmark Sound Effects
@@ -1644,7 +2132,21 @@ function CityMap({
     }
     if (tile === TILE_WATER) {
       playWaterSplashSound();
-      ripplesRef.current.push({ x: clickX, y: clickY, radius: 2, alpha: 0.8 });
+      ripplesRef.current.push({ x: clickX, y: clickY, radius: 4, alpha: 0.8 });
+      return;
+    }
+    if (tile === TILE_FOUNTAIN) {
+      playWaterSplashSound();
+      ripplesRef.current.push({ x: clickX, y: clickY, radius: 5, alpha: 0.9 });
+      clickEffectsRef.current.push({ x: clickX, y: clickY, text: '⛲ SPLASH!' });
+      return;
+    }
+    if (tile === TILE_BENCH) {
+      clickEffectsRef.current.push({ x: clickX, y: clickY, text: '🪑 Cedar Bench' });
+      return;
+    }
+    if (tile === TILE_PLAYGROUND) {
+      clickEffectsRef.current.push({ x: clickX, y: clickY, text: '🎠 Wheeee!' });
       return;
     }
 
@@ -1707,6 +2209,8 @@ function CityMap({
 
       <canvas
         ref={canvasRef}
+        width={1024}
+        height={768}
         className="city-map-canvas"
         onClick={handleClick}
         onMouseMove={handleMouseMove}

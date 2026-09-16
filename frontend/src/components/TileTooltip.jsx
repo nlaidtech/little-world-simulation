@@ -1,7 +1,8 @@
 import React from 'react';
 import { 
   TILE_EMPTY, TILE_ROAD, TILE_HOUSE, TILE_MEDIUM, TILE_LARGE, 
-  TILE_TREE, TILE_WATER, TILE_BRIDGE, TILE_CHURCH, TILE_FARM 
+  TILE_TREE, TILE_WATER, TILE_BRIDGE, TILE_CHURCH, TILE_FARM,
+  TILE_BENCH, TILE_FOUNTAIN, TILE_PLAYGROUND
 } from '../data/cityLayout';
 import { TREE_SPECIES } from '../data/treeSpecies';
 
@@ -74,6 +75,21 @@ function TileTooltip({ tileInfo, year, treeMetadata }) {
     title = 'Sunnybrook Farm Pasture';
     subtitle = 'Red timber barn with silo and 4 grazing Holstein cows 🐄.';
     badge = 'Agriculture';
+  } else if (type === TILE_BENCH) {
+    icon = '🪑';
+    title = 'Park Bench Promenade';
+    subtitle = 'Comfortable cedar bench under the leafy urban canopy where citizens read and rest.';
+    badge = 'Park Amenity';
+  } else if (type === TILE_FOUNTAIN) {
+    icon = '⛲';
+    title = 'Grand Plaza Water Fountain';
+    subtitle = 'Tiered civic water fountain cooling the surrounding plaza with refreshing mist.';
+    badge = 'Civic Landmark';
+  } else if (type === TILE_PLAYGROUND) {
+    icon = '🎠';
+    title = 'Community Playground';
+    subtitle = 'Neighborhood schoolyard with swings, slide, and shade trees for children.';
+    badge = 'Recreation';
   }
 
   return (

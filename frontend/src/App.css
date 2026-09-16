@@ -10,7 +10,9 @@
 /* ========== Game Layout ========== */
 .game-container {
   display: flex;
+  width: 100vw;
   height: 100vh;
+  background-color: var(--game-bg);
   overflow: hidden;
   font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
   position: relative;
@@ -18,7 +20,7 @@
 }
 
 .game-container.night-mode {
-  --game-bg: #101c12;
+  --game-bg: #0b140c;
   --sidebar-bg: #101e12;
 }
 
@@ -438,10 +440,10 @@
 
 .city-map-container {
   position: relative;
-  max-width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin: auto;
 }
 
 .map-view-controls {
@@ -1384,4 +1386,529 @@
 .event-action-btn.accept-penalty:hover {
   background: linear-gradient(135deg, #a93226, #c0392b);
   transform: translateY(-1px);
+}
+
+
+/* ==========================================================================
+   Modern Glassmorphic UI & Game HUD Overhaul
+   ========================================================================== */
+
+/* Fullscreen Map Canvas Layout */
+.game-main-fullscreen {
+  flex: 1;
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #132415;
+}
+
+.map-wrapper-fullscreen {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+  padding: 60px 20px 90px;
+  box-sizing: border-box;
+}
+
+/* --- Top Floating Status Bar --- */
+.top-status-bar {
+  position: fixed;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 32px);
+  max-width: 1280px;
+  height: 52px;
+  background: rgba(15, 23, 42, 0.78);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 26px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 1000;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+  transition: all 0.3s ease;
+}
+
+.status-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.status-logo-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1.5px solid rgba(52, 211, 153, 0.6);
+}
+
+.status-brand-text {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.status-brand-title {
+  font-weight: 900;
+  font-size: 1.15rem;
+  letter-spacing: 0.06em;
+  background: linear-gradient(135deg, #34d399, #10b981);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.status-brand-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 0.1em;
+}
+
+/* Center Live Metrics Group */
+.status-metrics-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hud-pill {
+  background: rgba(30, 41, 59, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 4px 12px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  white-space: nowrap;
+}
+
+.hud-pill.clickable {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.hud-pill.clickable:hover {
+  background: rgba(51, 65, 85, 0.85);
+  border-color: rgba(245, 158, 11, 0.4);
+  transform: translateY(-1px);
+}
+
+.pill-icon {
+  font-size: 0.95rem;
+}
+
+.pill-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.pill-label {
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+.pill-value {
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.pill-subtext {
+  font-size: 0.68rem;
+  color: #94a3b8;
+  margin-left: -2px;
+}
+
+.text-emerald { color: #34d399; }
+.text-green { color: #86efac; }
+.text-amber { color: #fbbf24; }
+.text-cyan { color: #38bdf8; }
+
+.dividend-tag {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 8px;
+  border: 1px solid rgba(52, 211, 153, 0.3);
+}
+
+/* Right Actions in Status Bar */
+.status-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hud-icon-btn {
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #f8fafc;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+.hud-icon-btn:hover {
+  background: rgba(51, 65, 85, 0.9);
+  border-color: #38bdf8;
+  transform: scale(1.06);
+}
+.hud-icon-btn.muted { opacity: 0.55; }
+
+.hud-analytics-btn {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(6, 95, 70, 0.35));
+  border: 1px solid rgba(52, 211, 153, 0.4);
+  color: #34d399;
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 17px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.hud-analytics-btn:hover,
+.hud-analytics-btn.active {
+  background: linear-gradient(135deg, #059669, #10b981);
+  color: #ffffff;
+  border-color: #34d399;
+  box-shadow: 0 0 16px rgba(16, 185, 129, 0.45);
+  transform: translateY(-1px);
+}
+
+/* --- Floating Bottom Action Dock --- */
+.bottom-dock-container {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  max-width: 1200px;
+  width: calc(100% - 32px);
+  pointer-events: none;
+}
+
+.bottom-dock {
+  pointer-events: auto;
+  background: rgba(15, 23, 42, 0.82);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 20px;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+}
+
+.dock-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Dock Timeline Wing */
+.dock-timeline {
+  flex-shrink: 0;
+}
+
+.dock-play-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #34d399;
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+.dock-play-btn:hover {
+  background: rgba(16, 185, 129, 0.35);
+  transform: scale(1.08);
+}
+.dock-play-btn.playing {
+  border-color: #fbbf24;
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.2);
+}
+
+.dock-speed-pills {
+  display: flex;
+  background: rgba(30, 41, 59, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.dock-speed-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 6px 9px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.dock-speed-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+.dock-speed-btn.active {
+  background: #38bdf8;
+  color: #0f172a;
+}
+
+.dock-scrubber-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 140px;
+}
+
+.dock-year-label, .dock-year-max {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #cbd5e1;
+}
+
+.dock-slider {
+  flex: 1;
+  accent-color: #34d399;
+  cursor: pointer;
+  height: 4px;
+}
+
+/* Dock Center: Species Cards */
+.dock-species-deck {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  justify-content: center;
+}
+
+.dock-species-label {
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #64748b;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+}
+
+.dock-species-cards {
+  display: flex;
+  gap: 8px;
+}
+
+.species-card {
+  background: rgba(30, 41, 59, 0.75);
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 6px 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  color: #f8fafc;
+}
+.species-card:hover:not(.disabled) {
+  background: rgba(51, 65, 85, 0.95);
+  border-color: #34d399;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+}
+.species-card.selected {
+  background: rgba(16, 185, 129, 0.18);
+  border-color: #34d399;
+  box-shadow: 0 0 14px rgba(52, 211, 153, 0.35);
+  transform: translateY(-2px);
+}
+.species-card.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: grayscale(0.6);
+}
+
+.species-hotkey {
+  position: absolute;
+  top: -5px;
+  left: -4px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #94a3b8;
+  font-size: 0.58rem;
+  font-weight: 800;
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.species-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+}
+
+.species-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.species-title {
+  font-size: 0.74rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.species-cost {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #34d399;
+}
+
+.species-badge {
+  font-size: 0.58rem;
+  font-weight: 700;
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  padding: 1px 4px;
+  border-radius: 4px;
+}
+
+/* Dock Right: Viewport Toggles */
+.dock-toggles {
+  flex-shrink: 0;
+}
+
+.dock-toggle-btn {
+  background: rgba(30, 41, 59, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+  padding: 7px 10px;
+  border-radius: 10px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.dock-toggle-btn:hover {
+  background: rgba(51, 65, 85, 0.9);
+  border-color: #38bdf8;
+  color: #ffffff;
+}
+.dock-toggle-btn.active-rain {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.3), rgba(14, 165, 233, 0.3));
+  border-color: #38bdf8;
+  color: #38bdf8;
+}
+.dock-toggle-btn.active-night {
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.3), rgba(124, 58, 237, 0.3));
+  border-color: #a78bfa;
+  color: #c4b5fd;
+}
+.dock-toggle-btn.active-heat {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.3), rgba(245, 158, 11, 0.3));
+  border-color: #f87171;
+  color: #fca5a5;
+}
+.dock-toggle-btn.active-baseline {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.3), rgba(217, 119, 6, 0.3));
+  border-color: #fbbf24;
+  color: #fde68a;
+}
+.dock-toggle-btn.active-season {
+  border-color: rgba(251, 191, 36, 0.3);
+}
+
+/* --- Slide-out Municipal Analytics Drawer --- */
+.analytics-drawer {
+  position: fixed;
+  top: 0;
+  right: -360px;
+  width: 340px;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  z-index: 1500;
+  overflow-y: auto;
+  padding: 20px 16px 40px;
+  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.6);
+  transition: right 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+}
+
+.analytics-drawer.open {
+  right: 0;
+}
+
+.panel-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.drawer-close-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #94a3b8;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.15s ease;
+}
+.drawer-close-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #f87171;
+  color: #f87171;
 }

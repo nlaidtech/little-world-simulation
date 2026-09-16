@@ -17,7 +17,8 @@ function StatsPanel({
   onTreeTypeChange, 
   unlockedAchievements,
   soundMuted,
-  onToggleSound 
+  onToggleSound,
+  onClose
 }) {
   const [showAchievements, setShowAchievements] = useState(false);
   const [showEconomicBreakdown, setShowEconomicBreakdown] = useState(true);
@@ -44,14 +45,25 @@ function StatsPanel({
   return (
     <div className="stats-panel">
       <div className="panel-header-row">
-        <h2>🌳 City Stats</h2>
-        <button 
-          className={`sound-toggle-btn ${soundMuted ? 'muted' : ''}`}
-          onClick={onToggleSound}
-          title={soundMuted ? 'Unmute Sound Effects' : 'Mute Sound Effects'}
-        >
-          {soundMuted ? '🔇' : '🔊'}
-        </button>
+        <h2>📊 Municipal Analytics</h2>
+        <div className="panel-header-actions">
+          <button 
+            className={`sound-toggle-btn ${soundMuted ? 'muted' : ''}`}
+            onClick={onToggleSound}
+            title={soundMuted ? 'Unmute Sound Effects' : 'Mute Sound Effects'}
+          >
+            {soundMuted ? '🔇' : '🔊'}
+          </button>
+          {onClose && (
+            <button 
+              className="drawer-close-btn" 
+              onClick={onClose} 
+              title="Close Analytics Drawer"
+            >
+              ✕
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Municipal Green Treasury Card */}

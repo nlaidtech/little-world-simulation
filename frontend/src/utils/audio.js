@@ -272,3 +272,35 @@ export function playWaterSplashSound() {
     console.warn('Audio playback error', e);
   }
 }
+
+// 👋 Citizen Greeting Chime (Pleasant cheerful two-tone chime)
+export function playCitizenGreetingSound() {
+  if (!soundEnabled) return;
+  try {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+
+    const notes = [587.33, 880.00]; // D5, A5
+    notes.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const t = now + i * 0.09;
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, t);
+
+      gain.gain.setValueAtTime(0.2, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(t);
+      osc.stop(t + 0.28);
+    });
+  } catch (e) {
+    console.warn('Audio playback error', e);
+  }
+}
+

@@ -14,6 +14,8 @@ import { CLIMATE_EVENTS } from './data/climateEvents';
 import { calculateEconomicSavings } from './utils/economic';
 import { calculateAQI } from './utils/aqi';
 import { playPlantSound, playRemoveSound, playAchievementSound, toggleSound, isSoundEnabled } from './utils/audio';
+import TopStatusBar from './components/TopStatusBar';
+import BottomDock from './components/BottomDock';
 import './App.css';
 
 function deepCopyGrid(grid) {
@@ -50,6 +52,7 @@ function App() {
   const [unlockedAchievements, setUnlockedAchievements] = useState([]);
   const [currentToast, setCurrentToast] = useState(null);
   const [soundMuted, setSoundMuted] = useState(!isSoundEnabled());
+  const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false);
 
   const timerRef = useRef(null);
   const toastTimeoutRef = useRef(null);
@@ -280,42 +283,26 @@ function App() {
         />
       )}
 
-      {/* Left sidebar — Stats & Achievements */}
-      <aside className="game-sidebar">
-        <div className="game-logo">
-          <img src="/assets/logo.jpg" alt="Canopy" className="game-logo-img" />
-          <div>
-            <h1>Canopy</h1>
-            <span className="game-tagline">Living City Simulator</span>
-          </div>
-        </div>
-        <StatsPanel
-          results={results}
-          treeCount={totalTrees}
-          year={year}
-          treeType={treeType}
-          comparisonMode={comparisonMode}
-          budget={budget}
-          annualDividend={annualDividend}
-          activeEvent={activeEvent}
-          onTriggerCrisis={handleTriggerCrisis}
-          onTreeTypeChange={setTreeType}
-          unlockedAchievements={unlockedAchievements}
-          soundMuted={soundMuted}
-          onToggleSound={handleToggleSound}
-        />
-      </aside>
+      {/* Top Floating Glass Status Bar */}
+      <TopStatusBar
+        year={year}
+        season={season}
+        budget={budget}
+        annualDividend={annualDividend}
+        aqi={aqi}
+        metrics={results}
+        comparisonMode={comparisonMode}
+        activeEvent={activeEvent}
+        isAnalyticsOpen={isAnalyticsOpen}
+        onOpenAnalytics={() => setIsAnalyticsOpen(prev => !prev)}
+        soundMuted={soundMuted}
+        onToggleSound={handleToggleSound}
+        onCycleSeason={handleCycleSeason}
+      />
 
-      {/* Main area — Map + Controls */}
-      <main className="game-main">
-        {/* Top Tree Species Selection Bar */}
-        <TreeSpeciesBar
-          selectedSpecies={selectedSpecies}
-          onSelectSpecies={setSelectedSpecies}
-          budget={budget}
-        />
-
-        <div className="map-wrapper">
+      {/* Edge-to-Edge Canvas Map */}
+      <main className="game-main-fullscreen">
+        <div className="map-wrapper-fullscreen">
           <CityMap
             grid={grid}
             year={year}
@@ -340,26 +327,50 @@ function App() {
           year={year} 
           treeMetadata={treeMetadata} 
         />
-
-        <TimeControls
-          year={year}
-          isPlaying={isPlaying}
-          speed={speed}
-          weather={weather}
-          timeOfDay={timeOfDay}
-          season={season}
-          isHeatmapActive={isHeatmapActive}
-          comparisonMode={comparisonMode}
-          onYearChange={setYear}
-          onPlayPause={() => setIsPlaying(prev => !prev)}
-          onSpeedChange={setSpeed}
-          onToggleWeather={handleToggleWeather}
-          onToggleTimeOfDay={handleToggleTimeOfDay}
-          onToggleHeatmap={handleToggleHeatmap}
-          onToggleComparison={handleToggleComparison}
-          onCycleSeason={handleCycleSeason}
-        />
       </main>
+
+      {/* Floating Bottom Action Dock */}
+      <BottomDock
+        year={year}
+        isPlaying={isPlaying}
+        speed={speed}
+        weather={weather}
+        timeOfDay={timeOfDay}
+        season={season}
+        isHeatmapActive={isHeatmapActive}
+        comparisonMode={comparisonMode}
+        selectedSpecies={selectedSpecies}
+        budget={budget}
+        onYearChange={setYear}
+        onPlayPause={() => setIsPlaying(prev => !prev)}
+        onSpeedChange={setSpeed}
+        onToggleWeather={handleToggleWeather}
+        onToggleTimeOfDay={handleToggleTimeOfDay}
+        onToggleHeatmap={handleToggleHeatmap}
+        onToggleComparison={handleToggleComparison}
+        onCycleSeason={handleCycleSeason}
+        onSelectSpecies={setSelectedSpecies}
+      />
+
+      {/* Slide-out Municipal Analytics Drawer */}
+      <aside className={`analytics-drawer ${isAnalyticsOpen ? 'open' : ''}`}>
+        <StatsPanel
+          results={results}
+          treeCount={totalTrees}
+          year={year}
+          treeType={treeType}
+          comparisonMode={comparisonMode}
+          budget={budget}
+          annualDividend={annualDividend}
+          activeEvent={activeEvent}
+          onTriggerCrisis={handleTriggerCrisis}
+          onTreeTypeChange={setTreeType}
+          unlockedAchievements={unlockedAchievements}
+          soundMuted={soundMuted}
+          onToggleSound={handleToggleSound}
+          onClose={() => setIsAnalyticsOpen(false)}
+        />
+      </aside>
     </div>
   );
 }
