@@ -3,7 +3,6 @@ import CityMap from './components/CityMap';
 import StatsPanel from './components/StatsPanel';
 import TimeControls from './components/TimeControls';
 import TreeSpeciesBar from './components/TreeSpeciesBar';
-import TileTooltip from './components/TileTooltip';
 import AchievementToast from './components/AchievementToast';
 import ClimateEventBanner from './components/ClimateEventBanner';
 import { simulate } from './api';
@@ -47,7 +46,6 @@ function App() {
   const [budget, setBudget] = useState(10000);
   const [activeEvent, setActiveEvent] = useState(null);
   const [treeMetadata, setTreeMetadata] = useState({});
-  const [hoveredTileInfo, setHoveredTileInfo] = useState(null);
   const [results, setResults] = useState(null);
   const [unlockedAchievements, setUnlockedAchievements] = useState([]);
   const [currentToast, setCurrentToast] = useState(null);
@@ -317,16 +315,8 @@ function App() {
             aqi={aqi}
             onPlantTree={handlePlantTree}
             onRemoveTree={handleRemoveTree}
-            onHoverTileChange={setHoveredTileInfo}
           />
         </div>
-
-        {/* Hover Inspector Tooltip HUD */}
-        <TileTooltip 
-          tileInfo={hoveredTileInfo} 
-          year={year} 
-          treeMetadata={treeMetadata} 
-        />
       </main>
 
       {/* Floating Bottom Action Dock */}

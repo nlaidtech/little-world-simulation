@@ -381,12 +381,10 @@ function CityMap({
   aqi = null,
   onPlantTree, 
   onRemoveTree,
-  onHoverTileChange,
 }) {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
   const hoverTileRef = useRef(null);
-  const lastHoverCoordRef = useRef({ row: -1, col: -1 });
   const [zoom, setZoom] = useState(1.0);
 
   // Entities and systems
@@ -2433,28 +2431,13 @@ function CityMap({
 
     if (row >= 0 && row < ROWS && col >= 0 && col < COLS) {
       hoverTileRef.current = { row, col };
-      // Only notify parent when tile coordinate actually changes to prevent re-render lag!
-      if (row !== lastHoverCoordRef.current.row || col !== lastHoverCoordRef.current.col) {
-        lastHoverCoordRef.current = { row, col };
-        const actualType = comparisonMode === 'before' && grid[row][col] === TILE_TREE ? TILE_EMPTY : grid[row][col];
-        const info = { row, col, type: actualType };
-        if (onHoverTileChange) onHoverTileChange(info);
-      }
     } else {
       hoverTileRef.current = null;
-      if (lastHoverCoordRef.current.row !== -1) {
-        lastHoverCoordRef.current = { row: -1, col: -1 };
-        if (onHoverTileChange) onHoverTileChange(null);
-      }
     }
   };
 
   const handleMouseLeave = () => {
     hoverTileRef.current = null;
-    if (lastHoverCoordRef.current.row !== -1) {
-      lastHoverCoordRef.current = { row: -1, col: -1 };
-      if (onHoverTileChange) onHoverTileChange(null);
-    }
   };
 
   const handleClick = (e) => {
