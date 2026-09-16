@@ -1,0 +1,1387 @@
+:root {
+  --sidebar-bg: #1a2e1a;
+  --sidebar-text: #c8e6c9;
+  --sidebar-accent: #66bb6a;
+  --game-bg: #223722;
+  --card-bg: rgba(255, 255, 255, 0.05);
+  --border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ========== Game Layout ========== */
+.game-container {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+  position: relative;
+  transition: background-color 0.6s ease;
+}
+
+.game-container.night-mode {
+  --game-bg: #101c12;
+  --sidebar-bg: #101e12;
+}
+
+/* ========== Sidebar ========== */
+.game-sidebar {
+  width: 290px;
+  min-width: 290px;
+  background: var(--sidebar-bg);
+  color: var(--sidebar-text);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  border-right: 1px solid var(--border-color);
+  z-index: 10;
+}
+
+.game-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.25rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.game-logo-img {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+}
+
+.game-logo h1 {
+  margin: 0;
+  font-size: 1.4rem;
+  color: #81c784;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.game-tagline {
+  font-size: 0.75rem;
+  color: #a5d6a7;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ========== Stats Panel ========== */
+.stats-panel {
+  padding: 1.25rem;
+  flex: 1;
+}
+
+.panel-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.panel-header-row h2 {
+  margin: 0;
+  font-size: 1rem;
+  color: #a5d6a7;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+}
+
+.sound-toggle-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-color);
+  font-size: 1rem;
+  border-radius: 6px;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sound-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.sound-toggle-btn.muted {
+  opacity: 0.6;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.45rem 0;
+}
+
+.stat-row.highlight {
+  background: rgba(102, 187, 106, 0.15);
+  margin: 0 -1.25rem;
+  padding: 0.55rem 1.25rem;
+  border-radius: 8px;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: #a5d6a7;
+}
+
+.stat-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #e8f5e9;
+}
+
+.stat-row.green .stat-value { color: #81c784; }
+.stat-row.teal .stat-value { color: #80cbc4; }
+.stat-row.blue .stat-value { color: #81d4fa; }
+.stat-row.orange .stat-value { color: #ffb74d; }
+
+.stat-equivalent {
+  font-size: 0.75rem;
+  color: #78a87a;
+  padding: 0.15rem 0 0.4rem 1.5rem;
+  font-style: italic;
+}
+
+.stat-divider {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 0.75rem 0;
+}
+
+.tree-type-select {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--border-color);
+  color: var(--sidebar-text);
+  padding: 0.3rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.tree-type-select option {
+  background: var(--sidebar-bg);
+  color: var(--sidebar-text);
+}
+
+/* Canopy bar */
+.canopy-bar {
+  height: 8px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 0.4rem;
+}
+
+.canopy-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #43a047, #66bb6a);
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+/* ========== Achievements Accordion ========== */
+.achievements-section {
+  margin-top: 0.5rem;
+}
+
+.achievements-toggle {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(102, 187, 106, 0.12);
+  border: 1px solid rgba(102, 187, 106, 0.25);
+  color: #a5d6a7;
+  padding: 0.55rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.achievements-toggle:hover {
+  background: rgba(102, 187, 106, 0.2);
+  color: #e8f5e9;
+}
+
+.trophy-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.achievements-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  max-height: 220px;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+.achievement-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.5rem 0.6rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-color);
+  transition: all 0.2s ease;
+}
+
+.achievement-item.unlocked {
+  background: rgba(102, 187, 106, 0.12);
+  border-color: rgba(102, 187, 106, 0.4);
+}
+
+.achievement-item.locked {
+  opacity: 0.5;
+  filter: grayscale(0.8);
+}
+
+.achievement-item-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.achievement-item-text {
+  flex: 1;
+}
+
+.achievement-item-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #e8f5e9;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.achievement-item-title .check {
+  color: #66bb6a;
+  font-weight: 900;
+}
+
+.achievement-item-desc {
+  font-size: 0.72rem;
+  color: #a5d6a7;
+  margin-top: 0.15rem;
+  line-height: 1.3;
+}
+
+/* ========== Floating Achievement Toast ========== */
+.achievement-toast {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: linear-gradient(135deg, #1b3d1b, #2d5a2d);
+  border: 2px solid #81c784;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45), 0 0 15px rgba(129, 199, 132, 0.3);
+  color: #ffffff;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  z-index: 1000;
+  animation: slideInToast 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  max-width: 360px;
+}
+
+@keyframes slideInToast {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.achievement-icon {
+  font-size: 2.2rem;
+  line-height: 1;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.4rem;
+  border-radius: 10px;
+}
+
+.achievement-content {
+  flex: 1;
+}
+
+.achievement-tag {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #a5d6a7;
+  text-transform: uppercase;
+  margin-bottom: 0.2rem;
+}
+
+.achievement-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.achievement-desc {
+  font-size: 0.78rem;
+  color: #c8e6c9;
+  margin-top: 0.15rem;
+}
+
+.achievement-close {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.2rem;
+}
+
+.achievement-close:hover {
+  color: #fff;
+}
+
+/* ========== Main Game Area ========== */
+.game-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--game-bg);
+  overflow: hidden;
+  position: relative;
+}
+
+/* ========== Top Tree Species Selection Bar ========== */
+.tree-species-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.65rem 1.5rem;
+  background: rgba(0, 0, 0, 0.28);
+  border-bottom: 1px solid var(--border-color);
+  z-index: 10;
+}
+
+.species-bar-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #a5d6a7;
+  white-space: nowrap;
+}
+
+.species-buttons-group {
+  display: flex;
+  gap: 0.6rem;
+  overflow-x: auto;
+}
+
+.species-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1.5px solid transparent;
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  color: #e8f5e9;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.species-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-1px);
+}
+
+.species-btn.active {
+  background: rgba(102, 187, 106, 0.22);
+  box-shadow: 0 0 10px rgba(102, 187, 106, 0.3);
+}
+
+.species-icon {
+  font-size: 1.1rem;
+}
+
+.species-name {
+  font-weight: 700;
+}
+
+.species-badge {
+  font-size: 0.65rem;
+  color: #81c784;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+}
+
+/* ========== Map & Canvas View Controls ========== */
+.map-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 1.25rem;
+  overflow: auto;
+}
+
+.city-map-container {
+  position: relative;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.map-view-controls {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: rgba(0, 0, 0, 0.65);
+  padding: 0.25rem 0.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  z-index: 5;
+}
+
+.map-view-controls button {
+  background: transparent;
+  border: none;
+  color: #e8f5e9;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 0.2rem 0.35rem;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.map-view-controls button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.zoom-badge {
+  font-size: 0.72rem;
+  color: #a5d6a7;
+  font-weight: 700;
+  padding: 0 0.25rem;
+}
+
+.city-map-canvas {
+  display: block;
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+}
+
+/* ========== Hover Inspector HUD Tooltip ========== */
+.tile-tooltip-hud {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1.5rem;
+  background: rgba(16, 28, 18, 0.92);
+  border-top: 1px solid var(--border-color);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  animation: fadeInTooltip 0.2s ease;
+}
+
+@keyframes fadeInTooltip {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.tooltip-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.tooltip-details {
+  flex: 1;
+}
+
+.tooltip-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tooltip-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #e8f5e9;
+}
+
+.tooltip-coord {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.tooltip-badge {
+  font-size: 0.68rem;
+  background: rgba(102, 187, 106, 0.2);
+  color: #81c784;
+  border: 1px solid rgba(102, 187, 106, 0.35);
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+}
+
+.tooltip-sub {
+  font-size: 0.76rem;
+  color: #a5d6a7;
+  margin-top: 0.1rem;
+}
+
+/* ========== Time Controls ========== */
+.time-controls {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.85rem 1.5rem;
+  background: rgba(0, 0, 0, 0.42);
+  border-top: 1px solid var(--border-color);
+  z-index: 10;
+}
+
+.time-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 60px;
+}
+
+.year-label {
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.year-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #81c784;
+  line-height: 1;
+}
+
+.time-slider-group {
+  flex: 1;
+}
+
+.year-slider {
+  width: 100%;
+  accent-color: #66bb6a;
+  height: 6px;
+  cursor: pointer;
+}
+
+.time-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.play-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 2px solid #66bb6a;
+  background: transparent;
+  color: #66bb6a;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.play-btn:hover {
+  background: rgba(102, 187, 106, 0.2);
+}
+
+.play-btn.playing {
+  background: rgba(102, 187, 106, 0.15);
+  border-color: #ffb74d;
+  color: #ffb74d;
+}
+
+.speed-group {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.speed-btn {
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: rgba(255,255,255,0.5);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.speed-btn:hover {
+  background: rgba(255,255,255,0.08);
+}
+
+.speed-btn.active {
+  background: rgba(102, 187, 106, 0.2);
+  border-color: #66bb6a;
+  color: #66bb6a;
+}
+
+/* Time of Day Button */
+.time-of-day-btn {
+  padding: 0.4rem 0.85rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1.5px solid transparent;
+  transition: all 0.25s ease;
+}
+
+.time-of-day-btn.day {
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+  color: #ffffff;
+  border-color: #f39c12;
+  box-shadow: 0 0 10px rgba(243, 156, 18, 0.3);
+}
+
+.time-of-day-btn.night {
+  background: linear-gradient(135deg, #2c3e50, #1a252f);
+  color: #f1c40f;
+  border-color: #34495e;
+  box-shadow: 0 0 10px rgba(52, 73, 94, 0.5);
+}
+
+/* Weather Toggle Button */
+.weather-toggle-btn {
+  padding: 0.4rem 0.85rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1.5px solid transparent;
+  transition: all 0.25s ease;
+}
+
+.weather-toggle-btn.sunny {
+  background: linear-gradient(135deg, #f39c12, #f1c40f);
+  color: #2c3e50;
+  border-color: #f39c12;
+  box-shadow: 0 0 12px rgba(241, 196, 15, 0.4);
+}
+
+.weather-toggle-btn.sunny:hover,
+.time-of-day-btn:hover {
+  transform: scale(1.05);
+}
+
+.weather-toggle-btn.rainy {
+  background: linear-gradient(135deg, #2980b9, #3498db);
+  color: #ffffff;
+  border-color: #5dade2;
+  box-shadow: 0 0 12px rgba(52, 152, 219, 0.4);
+}
+
+.weather-toggle-btn.rainy:hover {
+  transform: scale(1.05);
+}
+
+/* ========== Responsive ========== */
+@media (max-width: 768px) {
+  .game-container {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .game-sidebar {
+    width: 100%;
+    min-width: 100%;
+    max-height: 40vh;
+  }
+
+  .map-wrapper {
+    padding: 1rem;
+  }
+
+  .time-controls {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .time-slider-group {
+    order: -1;
+    flex-basis: 100%;
+  }
+
+  .achievement-toast {
+    top: 1rem;
+    right: 1rem;
+    left: 1rem;
+    max-width: none;
+  }
+
+  .tree-species-bar {
+    padding: 0.5rem 1rem;
+  }
+}
+
+/* ========== Phase 1: Economic Valuation Card ========== */
+.economic-card {
+  background: linear-gradient(135deg, rgba(241, 196, 15, 0.12), rgba(46, 204, 113, 0.08));
+  border: 1px solid rgba(241, 196, 15, 0.35);
+  border-radius: 10px;
+  padding: 0.75rem 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+.economic-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.eco-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.eco-icon {
+  font-size: 1.4rem;
+}
+
+.eco-label {
+  font-size: 0.72rem;
+  color: #f1c40f;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.eco-value {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #2ecc71;
+  line-height: 1.1;
+}
+
+.eco-chevron {
+  font-size: 0.75rem;
+  color: #f1c40f;
+}
+
+.economic-details {
+  margin-top: 0.6rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed rgba(241, 196, 15, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.eco-subrow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.76rem;
+  color: #c8e6c9;
+}
+
+.eco-subvalue {
+  font-weight: 700;
+  color: #a5d6a7;
+}
+
+/* Comparison Alert Banner */
+.comparison-alert-banner {
+  background: rgba(230, 126, 34, 0.18);
+  border: 1px solid rgba(230, 126, 34, 0.45);
+  color: #f39c12;
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 0.45rem 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 0.75rem;
+  text-align: center;
+  animation: pulseAlert 2s infinite ease-in-out;
+}
+
+@keyframes pulseAlert {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 1; }
+}
+
+/* ========== Thermal Heatmap Mode & Legend ========== */
+.thermal-legend-bar {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 25, 35, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  padding: 0.4rem 0.9rem;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  z-index: 6;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  animation: fadeInTooltip 0.3s ease;
+}
+
+.thermal-legend-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #ffcc80;
+}
+
+.thermal-gradient-strip {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+/* Mode Toggle Buttons */
+.mode-toggle-btn {
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: 1.5px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.08);
+  color: #c8e6c9;
+  transition: all 0.2s ease;
+}
+
+.mode-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  transform: scale(1.04);
+}
+
+.mode-toggle-btn.heatmap.active {
+  background: linear-gradient(135deg, #e74c3c, #d35400);
+  color: #ffffff;
+  border-color: #e74c3c;
+  box-shadow: 0 0 12px rgba(231, 76, 60, 0.55);
+}
+
+.mode-toggle-btn.compare.active {
+  background: linear-gradient(135deg, #e67e22, #b9770e);
+  color: #ffffff;
+  border-color: #f39c12;
+  box-shadow: 0 0 12px rgba(243, 156, 18, 0.5);
+}
+
+.mode-toggle-btn.season-btn.season-spring {
+  background: linear-gradient(135deg, rgba(244, 143, 177, 0.25), rgba(236, 64, 122, 0.2));
+  border-color: #f48fb1;
+  color: #f8bbd0;
+}
+.mode-toggle-btn.season-btn.season-spring:hover {
+  background: linear-gradient(135deg, #f06292, #ec407a);
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(240, 98, 146, 0.5);
+}
+
+.mode-toggle-btn.season-btn.season-summer {
+  background: linear-gradient(135deg, rgba(46, 204, 113, 0.25), rgba(39, 174, 96, 0.2));
+  border-color: #2ecc71;
+  color: #a8e6cf;
+}
+.mode-toggle-btn.season-btn.season-summer:hover {
+  background: linear-gradient(135deg, #27ae60, #2ecc71);
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
+}
+
+.mode-toggle-btn.season-btn.season-autumn {
+  background: linear-gradient(135deg, rgba(230, 126, 34, 0.25), rgba(211, 84, 0, 0.2));
+  border-color: #e67e22;
+  color: #f8c471;
+}
+.mode-toggle-btn.season-btn.season-autumn:hover {
+  background: linear-gradient(135deg, #e67e22, #d35400);
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(230, 126, 34, 0.5);
+}
+
+.mode-toggle-btn.season-btn.season-winter {
+  background: linear-gradient(135deg, rgba(52, 152, 219, 0.25), rgba(41, 128, 185, 0.2));
+  border-color: #3498db;
+  color: #d4e6f1;
+}
+.mode-toggle-btn.season-btn.season-winter:hover {
+  background: linear-gradient(135deg, #2980b9, #3498db);
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+}
+
+/* ========== Phase 3: Municipal Treasury Card ========== */
+.treasury-card {
+  background: linear-gradient(135deg, rgba(46, 204, 113, 0.14), rgba(52, 152, 219, 0.1));
+  border: 1px solid rgba(46, 204, 113, 0.4);
+  border-radius: 10px;
+  padding: 0.75rem 0.9rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.treasury-header {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.treasury-icon {
+  font-size: 1.5rem;
+}
+
+.treasury-info {
+  flex: 1;
+}
+
+.treasury-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #81c784;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.treasury-balance-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 0.15rem;
+}
+
+.treasury-balance {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #2ecc71;
+  letter-spacing: -0.02em;
+}
+
+.treasury-balance.low-funds {
+  color: #e74c3c;
+  animation: pulseAlert 1.5s infinite;
+}
+
+.treasury-dividend {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #85c1e9;
+  background: rgba(52, 152, 219, 0.15);
+  padding: 0.15rem 0.45rem;
+  border-radius: 6px;
+  border: 1px solid rgba(52, 152, 219, 0.3);
+}
+
+/* Crisis Launcher Button */
+.crisis-launcher-row {
+  margin-bottom: 0.75rem;
+}
+
+.crisis-btn {
+  width: 100%;
+  padding: 0.55rem 0.8rem;
+  background: linear-gradient(135deg, rgba(230, 126, 34, 0.2), rgba(231, 76, 60, 0.18));
+  border: 1px solid rgba(230, 126, 34, 0.5);
+  color: #f39c12;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.crisis-btn:hover {
+  background: linear-gradient(135deg, #e67e22, #d35400);
+  color: #fff;
+  border-color: #e67e22;
+  box-shadow: 0 0 12px rgba(230, 126, 34, 0.4);
+  transform: translateY(-1px);
+}
+
+.crisis-btn.active {
+  background: linear-gradient(135deg, #c0392b, #962d22);
+  color: #fff;
+  border-color: #e74c3c;
+  animation: pulseAlert 1.2s infinite;
+}
+
+/* ========== Phase 3: Air Quality Index (AQI) Meter ========== */
+.aqi-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 0.75rem 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+.aqi-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.aqi-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+}
+
+.aqi-icon {
+  font-size: 1.4rem;
+}
+
+.aqi-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #a5d6a7;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.aqi-value-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.15rem;
+}
+
+.aqi-num {
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.aqi-status-pill {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.aqi-good { background: rgba(46, 204, 113, 0.2); color: #2ecc71; border: 1px solid rgba(46, 204, 113, 0.4); }
+.aqi-moderate { background: rgba(241, 196, 15, 0.2); color: #f1c40f; border: 1px solid rgba(241, 196, 15, 0.4); }
+.aqi-sensitive { background: rgba(230, 126, 34, 0.2); color: #e67e22; border: 1px solid rgba(230, 126, 34, 0.4); }
+.aqi-unhealthy { background: rgba(231, 76, 60, 0.2); color: #e74c3c; border: 1px solid rgba(231, 76, 60, 0.4); }
+.aqi-very-unhealthy { background: rgba(142, 68, 173, 0.2); color: #9b59b6; border: 1px solid rgba(142, 68, 173, 0.4); }
+.aqi-hazardous { background: rgba(120, 40, 31, 0.3); color: #e74c3c; border: 1px solid #78281f; }
+
+.aqi-bar-wrapper {
+  margin: 0.45rem 0;
+}
+
+.aqi-bar-track {
+  height: 8px;
+  background: linear-gradient(90deg, #2ecc71 0%, #f1c40f 33%, #e67e22 50%, #e74c3c 66%, #8e44ad 85%, #78281f 100%);
+  border-radius: 4px;
+  position: relative;
+}
+
+.aqi-bar-thumb {
+  position: absolute;
+  top: -4px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  transform: translateX(-50%);
+  transition: left 0.4s ease;
+}
+
+.aqi-bar-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.62rem;
+  color: #9e9e9e;
+  margin-top: 0.25rem;
+}
+
+.aqi-desc {
+  font-size: 0.72rem;
+  color: #c8e6c9;
+  line-height: 1.3;
+  margin-top: 0.35rem;
+  font-style: italic;
+}
+
+/* Species Cost Tag */
+.species-cost-tag {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #2ecc71;
+  background: rgba(46, 204, 113, 0.15);
+  border: 1px solid rgba(46, 204, 113, 0.35);
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+}
+
+.species-btn.unaffordable {
+  opacity: 0.45;
+  filter: grayscale(0.7);
+  cursor: not-allowed;
+}
+
+.species-btn.unaffordable .species-cost-tag {
+  color: #e74c3c;
+  background: rgba(231, 76, 60, 0.15);
+  border-color: rgba(231, 76, 60, 0.35);
+}
+
+/* ========== Phase 3: Climate Crisis Modal & Banner ========== */
+.climate-event-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeInModal 0.3s ease;
+}
+
+@keyframes fadeInModal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.climate-event-modal {
+  background: #1e2d24;
+  border: 1.5px solid rgba(231, 76, 60, 0.6);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(231, 76, 60, 0.3);
+  border-radius: 14px;
+  width: 90%;
+  max-width: 520px;
+  padding: 1.5rem;
+  color: #fff;
+  animation: scaleInModal 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes scaleInModal {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.event-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.event-modal-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.event-modal-icon {
+  font-size: 2.2rem;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0.4rem;
+  border-radius: 12px;
+}
+
+.event-modal-badge {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #ff7043;
+  background: rgba(230, 80, 20, 0.2);
+  border: 1px solid rgba(230, 80, 20, 0.4);
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.event-modal-title-row h3 {
+  margin: 0.2rem 0 0 0;
+  font-size: 1.25rem;
+  color: #fff;
+  font-weight: 800;
+}
+
+.event-modal-close {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.3rem;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.event-modal-close:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.event-modal-tagline {
+  font-size: 0.88rem;
+  font-style: italic;
+  color: #ffb74d;
+  margin: 0 0 0.6rem 0;
+}
+
+.event-modal-desc {
+  font-size: 0.82rem;
+  color: #cfd8dc;
+  line-height: 1.5;
+  margin: 0 0 1rem 0;
+}
+
+.event-readiness-card {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.readiness-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+  color: #eceff1;
+  margin-bottom: 0.5rem;
+}
+
+.readiness-status {
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 0.2rem 0.55rem;
+  border-radius: 12px;
+  letter-spacing: 0.06em;
+}
+
+.readiness-status.ready {
+  background: rgba(46, 204, 113, 0.2);
+  color: #2ecc71;
+  border: 1px solid rgba(46, 204, 113, 0.4);
+}
+
+.readiness-status.vulnerable {
+  background: rgba(231, 76, 60, 0.2);
+  color: #e74c3c;
+  border: 1px solid rgba(231, 76, 60, 0.4);
+}
+
+.readiness-bar-track {
+  height: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.readiness-bar-fill {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.5s ease;
+}
+
+.readiness-bar-fill.success {
+  background: linear-gradient(90deg, #27ae60, #2ecc71);
+  box-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
+}
+
+.readiness-bar-fill.warning {
+  background: linear-gradient(90deg, #e67e22, #e74c3c);
+  box-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
+}
+
+.readiness-outcome-note {
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.outcome-text.green { color: #81c784; }
+.outcome-text.orange { color: #ffb74d; }
+
+.event-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.event-action-btn {
+  width: 100%;
+  padding: 0.75rem 1.2rem;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  font-weight: 800;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.event-action-btn.claim-grant {
+  background: linear-gradient(135deg, #27ae60, #2ecc71);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
+}
+
+.event-action-btn.claim-grant:hover {
+  background: linear-gradient(135deg, #219653, #27ae60);
+  transform: translateY(-1px);
+}
+
+.event-action-btn.accept-penalty {
+  background: linear-gradient(135deg, #c0392b, #e74c3c);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+}
+
+.event-action-btn.accept-penalty:hover {
+  background: linear-gradient(135deg, #a93226, #c0392b);
+  transform: translateY(-1px);
+}
